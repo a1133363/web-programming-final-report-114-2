@@ -22,6 +22,21 @@
     </div>
 </section>
 
+<?php if (!empty($announcements)): ?>
+<section class="section" aria-label="最新公告">
+    <div class="announcement-bar">
+        <?php foreach ($announcements as $ann): ?>
+            <article class="announcement-card">
+                <span class="section-code">BROADCAST</span>
+                <h3><?= e($ann['title']) ?></h3>
+                <p><?= e($ann['body']) ?></p>
+                <time datetime="<?= e($ann['published_at']) ?>"><?= e(date('Y.m.d', strtotime($ann['published_at']))) ?></time>
+            </article>
+        <?php endforeach; ?>
+    </div>
+</section>
+<?php endif; ?>
+
 <section class="search-ledger" aria-labelledby="search-title">
     <div class="section-heading compact">
         <div><span class="section-code">FIND / 01</span><h2 id="search-title">搜尋封存目錄</h2></div>

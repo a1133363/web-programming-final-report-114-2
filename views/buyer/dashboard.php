@@ -24,8 +24,26 @@
         </section>
         <section id="orders" class="dashboard-panel">
             <div class="panel-heading"><div><span>ORDERS</span><h3>得標與交付</h3></div></div>
-            <div class="table-wrap"><table><thead><tr><th>訂單</th><th>物件</th><th>賣家</th><th>成交金額</th><th>狀態</th></tr></thead><tbody>
-                <?php foreach ($orders as $order): ?><tr><td>#<?= e($order['id']) ?></td><td><?= e($order['title']) ?></td><td><?= e($order['seller_name']) ?></td><td><?= e(money($order['final_price'])) ?></td><td><span class="status-pill"><?= e(status_label($order['status'])) ?></span></td></tr><?php endforeach; ?>
+            <div class="table-wrap"><table><thead><tr><th>訂單</th><th>物件</th><th>賣家</th><th>成交金額</th><th>物流</th><th>狀態</th><th>操作</th></tr></thead><tbody>
+                <?php foreach ($orders as $order): ?><tr>
+                    <td>#<?= e($order['id']) ?></td>
+                    <td><?= e($order['title']) ?></td>
+                    <td><?= e($order['seller_name']) ?></td>
+                    <td><?= e(money($order['final_price'])) ?></td>
+                    <td><?= e(status_label($order['delivery_status'] ?? 'pending')) ?><?= !empty($order['tracking_code']) ? '<br><small>' . e($order['tracking_code']) . '</small>' : '' ?></td>
+                    <td><span class="status-pill"><?= e(status_label($order['status'])) ?></span></td>
+                    <td>
+                        <?php if ($order['status'] === 'pending_payment'): ?>
+                            <a class="button button-small" href="<?= e(url('buyer-payment', ['order_id' => $order['id']])) ?>">付款</a>
+                        <?php elseif ($order['status'] === 'pending_delivery'): ?>
+                            <a class="button button-small button-ghost" href="<?= e(url('buyer-dispute', ['order_id' => $order['id']])) ?>">爭議</a>
+                        <?php elseif ($order['status'] === 'completed'): ?>
+                            <a class="button button-small button-ghost" href="<?= e(url('buyer-review', ['order_id' => $order['id']])) ?>">評價</a>
+                        <?php elseif ($order['status'] === 'disputed'): ?>
+                            <span class="status-pill">處理中</span>
+                        <?php endif; ?>
+                    </td>
+                </tr><?php endforeach; ?>
             </tbody></table></div>
         </section>
     </div>

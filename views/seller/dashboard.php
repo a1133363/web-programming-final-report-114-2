@@ -15,6 +15,36 @@
             <?php foreach ($auctions as $auction): ?><tr><td><strong><?= e($auction['lot_no']) ?></strong><br><?= e($auction['title']) ?></td><td><?= e($auction['category_name']) ?></td><td><span class="risk-text risk-<?= e($auction['risk_level']) ?>"><?= e(risk_label($auction['risk_level'])) ?></span></td><td><?= (int) ($auction['bid_count'] ?? 0) ?></td><td><?= e(money($auction['current_price'])) ?></td><td><span class="status-pill"><?= e(status_label($auction['status'])) ?></span></td></tr><?php endforeach; ?>
         </tbody></table></div>
     </div>
+    <div class="dashboard-panel">
+        <div class="panel-heading"><div><span>ORDERS</span><h3>待交付訂單</h3></div></div>
+        <div class="table-wrap"><table><thead><tr><th>訂單</th><th>物件</th><th>買家</th><th>成交金額</th><th>物流狀態</th><th>更新</th></tr></thead><tbody>
+            <?php foreach ($orders as $order): ?><tr>
+                <td>#<?= e($order['id']) ?></td>
+                <td><?= e($order['title']) ?></td>
+                <td><?= e($order['buyer_name']) ?></td>
+                <td><?= e(money($order['final_price'])) ?></td>
+                <td><?= e(status_label($order['delivery_status'] ?? 'pending')) ?><?= !empty($order['tracking_code']) ? '<br><small>' . e($order['tracking_code']) . '</small>' : '' ?></td>
+                <td>
+                    <?php if (in_array($order['status'], ['pending_delivery', 'disputed'], true)): ?>
+                        <form method="post" action="<?= e(url('seller-delivery')) ?>" class="inline-form">
+                            <?= csrf_field() ?>
+                            <input type="hidden" name="order_id" value="<?= (int) $order['id'] ?>">
+                            <select name="status">
+                                <option value="pending" <?= ($order['delivery_status'] ?? '') === 'pending' ? 'selected' : '' ?>>待處理</option>
+                                <option value="prepared" <?= ($order['delivery_status'] ?? '') === 'prepared' ? 'selected' : '' ?>>已備貨</option>
+                                <option value="in_transit" <?= ($order['delivery_status'] ?? '') === 'in_transit' ? 'selected' : '' ?>>運送中</option>
+                                <option value="delivered" <?= ($order['delivery_status'] ?? '') === 'delivered' ? 'selected' : '' ?>>已送達</option>
+                            </select>
+                            <input type="text" name="tracking_code" value="<?= e($order['tracking_code'] ?? '') ?>" placeholder="追蹤碼">
+                            <button class="button button-small" type="submit">更新</button>
+                        </form>
+                    <?php else: ?>
+                        <span class="status-pill"><?= e(status_label($order['status'])) ?></span>
+                    <?php endif; ?>
+                </td>
+            </tr><?php endforeach; ?>
+        </tbody></table></div>
+    </div>
 </section>
 
 <dialog id="create-auction" class="auction-dialog">
