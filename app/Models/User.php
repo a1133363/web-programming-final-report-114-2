@@ -68,7 +68,7 @@ final class User
                 'INSERT INTO user_roles (user_id, role_id)
                  SELECT :user_id, id FROM roles WHERE name = :role'
             );
-            $role->execute(['user_id' => $userId, 'role' => $data['role']]);
+            $role->execute(['user_id' => $userId, 'role' => $data['role'] ?? 'user']);
             $pdo->commit();
             return $userId;
         } catch (\Throwable $exception) {

@@ -18,7 +18,7 @@ final class SellerController
 {
     public function index(): void
     {
-        RoleMiddleware::handle('seller', 'admin');
+        RoleMiddleware::handle('user', 'admin');
         $model = new Auction();
         View::render('seller/dashboard', [
             'pageTitle' => '賣家控制室',
@@ -30,7 +30,7 @@ final class SellerController
 
     public function create(): never
     {
-        RoleMiddleware::handle('seller', 'admin');
+        RoleMiddleware::handle('user', 'admin');
         if (!Csrf::verify($_POST['_csrf'] ?? null)) {
             flash('error', '表單已過期，請重新送出。');
             redirect('seller');
@@ -66,7 +66,7 @@ final class SellerController
 
     public function aiDescription(): never
     {
-        RoleMiddleware::handle('seller', 'admin');
+        RoleMiddleware::handle('user', 'admin');
         header('Content-Type: application/json; charset=utf-8');
         if (!Csrf::verify($_POST['_csrf'] ?? null)) {
             http_response_code(419);
@@ -81,7 +81,7 @@ final class SellerController
 
     public function updateDelivery(): never
     {
-        RoleMiddleware::handle('seller', 'admin');
+        RoleMiddleware::handle('user', 'admin');
         if (!Csrf::verify($_POST['_csrf'] ?? null)) {
             flash('error', '表單已過期，請重新操作。');
             redirect('seller');
