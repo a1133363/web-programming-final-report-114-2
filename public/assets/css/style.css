@@ -106,7 +106,7 @@ svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width:
 .button-small { min-height: 40px; padding: 8px 16px; font-size: 13px; }
 .button-full { width: 100%; }
 .button-ghost { color: var(--paper); background: transparent; }
-.button-danger { min-height: 38px; padding: 8px 13px; color: #f4b7b9; border: 1px solid rgba(208, 91, 98, .5); border-radius: var(--radius-sm); background: rgba(208, 91, 98, .08); }
+.button-danger { min-height: 40px; padding: 8px 13px; color: #f4b7b9; border: 1px solid rgba(208, 91, 98, .5); border-radius: var(--radius-sm); background: rgba(208, 91, 98, .08); }
 .text-link { color: var(--copper); font-weight: 600; }
 .text-link span { display: inline-block; margin-left: 6px; transition: transform .2s ease; }
 .text-link:hover span { transform: translateX(4px); }
@@ -182,7 +182,7 @@ textarea { resize: vertical; }
 .demo-banner code { color: var(--copper); }
 
 .auction-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
-.auction-card { min-width: 0; border: 1px solid var(--line); background: var(--ink-2); transition: border-color .22s ease, transform .22s ease, box-shadow .22s ease; }
+.auction-card { display: flex; flex-direction: column; height: 100%; min-width: 0; border: 1px solid var(--line); background: var(--ink-2); transition: border-color .22s ease, transform .22s ease, box-shadow .22s ease; }
 .auction-card:hover { transform: translateY(-4px); border-color: rgba(192, 150, 109, .56); box-shadow: 0 18px 45px rgba(0, 0, 0, .28); }
 .auction-image { position: relative; display: block; aspect-ratio: 1/1; overflow: hidden; background: #0f0d10; }
 .auction-image::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(10, 8, 11, .56), transparent 44%); pointer-events: none; }
@@ -194,7 +194,7 @@ textarea { resize: vertical; }
 .risk-suspicious { color: var(--warning); }
 .risk-dangerous, .risk-prohibited { color: #e2787f; }
 .lot-stamp { position: absolute; z-index: 2; bottom: 12px; left: 13px; color: rgba(241, 234, 219, .75); font: 11px var(--mono); letter-spacing: .16em; }
-.auction-card-body { padding: 17px 17px 15px; }
+.auction-card-body { display: flex; flex-direction: column; flex-grow: 1; padding: 17px 17px 15px; }
 .auction-category, .seller-line { display: flex; align-items: center; justify-content: space-between; color: var(--paper-muted); font: 10px var(--mono); letter-spacing: .04em; }
 .auction-category span:first-child { color: var(--copper); }
 .auction-card h2, .auction-card h3 { min-height: 58px; margin: 12px 0 18px; font: 500 1.25rem/1.45 var(--serif); }
@@ -205,7 +205,7 @@ textarea { resize: vertical; }
 .auction-meta span { color: var(--paper-muted); font-size: 10px; }
 .auction-meta strong { margin-top: 4px; overflow: hidden; font: 600 14px var(--mono); text-overflow: ellipsis; white-space: nowrap; }
 .countdown strong { color: #d5b9f7; }
-.seller-line { justify-content: flex-start; gap: 7px; padding-top: 13px; }
+.seller-line { margin-top: auto; justify-content: flex-start; gap: 7px; padding-top: 13px; }
 .seller-line > span:last-child { margin-left: auto; }
 .verified { display: inline-grid; width: 17px; height: 17px; place-items: center; color: var(--ink); border-radius: 50%; background: var(--copper); font-size: 10px; }
 .empty-state { padding: 80px 20px; text-align: center; border: 1px dashed var(--line-strong); }
@@ -517,7 +517,7 @@ td:last-child, th:last-child { text-align: right; }
     .credit-card { position: static; max-width: 330px; margin-top: 24px; }
     .admin-shell { display: block; padding-top: 76px; }
     .admin-sidebar { position: relative; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
-    .admin-sidebar nav { grid-template-columns: repeat(3, 1fr); }
+    .admin-sidebar nav { grid-template-columns: repeat(5, 1fr); }
     .system-health { position: static; margin-top: 20px; }
     .admin-chart-grid { grid-template-columns: 1fr; }
 }
@@ -600,7 +600,8 @@ td:last-child, th:last-child { text-align: right; }
     .dialog-grid { grid-template-columns: 1fr; }
     .span-2 { grid-column: auto; }
     .ai-writer { grid-template-columns: 1fr; }
-    .admin-sidebar nav { grid-template-columns: 1fr 1fr; }
+    .admin-sidebar nav { display: flex; flex-wrap: wrap; gap: 5px; }
+    .admin-sidebar nav a { flex: 1 1 30%; }
     .admin-content { padding: 28px 12px 60px; }
     .admin-topbar { align-items: flex-start; flex-direction: column; gap: 18px; }
     .review-list > article { grid-template-columns: 55px 1fr; }

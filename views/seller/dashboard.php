@@ -32,7 +32,7 @@
             <label class="span-2"><span>商品描述</span><textarea name="description" rows="5" minlength="20" placeholder="描述來源、外觀、已知異常與交付內容…" required></textarea></label>
             <label><span>起標價</span><input type="number" name="starting_price" min="1" step="1" required></label>
             <label><span>底價（選填）</span><input type="number" name="reserve_price" min="0" step="1"></label>
-            <label><span>最低加價</span><input type="number" name="min_increment" min="1" step="1" required></label>
+            <label class="span-2"><span>最低加價</span><input type="number" name="min_increment" min="1" step="1" required></label>
             <label><span>開始時間</span><input type="datetime-local" name="start_at" required></label>
             <label><span>結束時間</span><input type="datetime-local" name="end_at" required></label>
         </div>
