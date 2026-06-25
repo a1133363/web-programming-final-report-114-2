@@ -92,8 +92,15 @@ final class SellerController
         }
         $extensions = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
         $filename = bin2hex(random_bytes(16)) . '.' . $extensions[$mime];
-        $target = $config['upload_dir'] . '/' . $filename;
-        if (!move_uploaded_file($_FILES['image']['tmp_name'], $target)) {
+        $uploadDir = $config['upload_dir'];
+        if (!is_dir($uploadDir) && !@mkdir($uploadDir, 0755, true) && !is_dir($uploadDir)) {
+            throw new \RuntimeException('圖片上傳目錄建立失敗。');
+        }
+        if (!is_writable($uploadDir)) {
+            throw new \RuntimeException('圖片上傳目錄無法寫入，請檢查 storage/uploads 權限。');
+        }
+        $target = $uploadDir . '/' . $filename;
+        if (!@move_uploaded_file($_FILES['image']['tmp_name'], $target)) {
             throw new \RuntimeException('圖片儲存失敗。');
         }
         $pdo = Database::connection();
