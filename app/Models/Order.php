@@ -75,6 +75,9 @@ final class Order
 
     public function markPaid(int $orderId, int $buyerId, string $method): void
     {
+        if ($method !== 'escrow') {
+            throw new \RuntimeException('目前僅支援錢包託管付款。');
+        }
         $pdo = Database::connection();
         if (!$pdo) {
             throw new \RuntimeException('示範模式無法付款，請先匯入資料庫。');
