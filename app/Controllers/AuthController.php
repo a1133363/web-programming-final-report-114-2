@@ -90,7 +90,15 @@ final class AuthController
             flash('success', '席位已建立，初始信用分數為 80。');
             redirect('buyer');
         } catch (\Throwable $exception) {
-            flash('error', str_contains($exception->getMessage(), 'Duplicate') ? '此電子信箱已被使用。' : $exception->getMessage());
+            $msg = $exception->getMessage();
+            if (str_contains($msg, 'Duplicate')) {
+                $error = str_contains($msg, 'username') || str_contains($msg, 'uq_users_username')
+                    ? '此匿名代號已被使用。'
+                    : '此電子信箱已被使用。';
+            } else {
+                $error = $msg;
+            }
+            flash('error', $error);
             redirect('register');
         }
     }
