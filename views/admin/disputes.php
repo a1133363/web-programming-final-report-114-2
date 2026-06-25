@@ -37,7 +37,7 @@
                     </article>
                 <?php endforeach; ?>
                 <?php if (!$disputes): ?>
-                    <div class="empty-state"><strong>目前沒有爭議紀錄。</strong></div>
+                    <div class="empty-state"><strong>目前沒有爭議紀錄</strong></div>
                 <?php endif; ?>
             </div>
         </section>

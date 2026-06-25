@@ -56,8 +56,18 @@ final class BuyerController
             redirect('buyer');
         }
         $orderId = filter_var($_POST['order_id'] ?? 0, FILTER_VALIDATE_INT) ?: 0;
-        $method = in_array($_POST['method'] ?? '', ['bank_transfer', 'virtual_credit', 'escrow'], true)
-            ? $_POST['method'] : 'escrow';
+        if (empty($_POST['confirm_payment'])) {
+            flash('error', '請先確認付款內容');
+            if ($orderId > 0) {
+                redirect('buyer-payment', ['order_id' => $orderId]);
+            }
+            redirect('buyer');
+        }
+        $method = (string) ($_POST['method'] ?? 'escrow');
+        if ($method !== 'escrow') {
+            flash('error', '目前僅支援錢包託管付款');
+            redirect('buyer');
+        }
         try {
             (new Order())->markPaid($orderId, (int) Auth::user()['id'], $method);
             flash('success', '付款完成，已通知賣家準備交付。');

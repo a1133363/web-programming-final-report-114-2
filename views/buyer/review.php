@@ -1,7 +1,7 @@
 <section class="auth-shell">
     <div class="auth-aside">
         <span class="section-code">REVIEW / CREDIT</span>
-        <h1>留下<br>交易評價。</h1>
+        <h1>留下<br>交易評價</h1>
         <p>評價將影響對方的信用分數與其他會員的交易決策。請根據實際體驗給予公正評分。</p>
     </div>
     <div class="auth-card">

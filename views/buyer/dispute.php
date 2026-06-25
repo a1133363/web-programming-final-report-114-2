@@ -1,7 +1,7 @@
 <section class="auth-shell">
     <div class="auth-aside">
         <span class="section-code">DISPUTE / RAISE</span>
-        <h1>提出<br>交易爭議。</h1>
+        <h1>提出<br>交易爭議</h1>
         <p>若交付內容與描述不符、賣家未出貨或其他違規行為，可在此提交爭議申請，管理員將介入調查。</p>
     </div>
     <div class="auth-card">

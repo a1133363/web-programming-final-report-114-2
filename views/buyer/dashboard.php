@@ -2,12 +2,16 @@
 $user = current_user();
 $wallet = $wallet ?? ['balance' => 0, 'transactions' => []];
 $transactionLabels = ['payment' => '付款', 'refund' => '退款', 'payout' => '收款', 'deposit' => '入金'];
+$pendingPaymentOrders = array_values(array_filter($orders, static fn($order) => ($order['status'] ?? '') === 'pending_payment'));
+$pendingPaymentTotal = array_sum(array_map(static fn($order) => (float) ($order['final_price'] ?? 0), $pendingPaymentOrders));
+$walletBalance = (float) ($wallet['balance'] ?? 0);
+$balanceAfterPending = $walletBalance - $pendingPaymentTotal;
 ?>
 <section class="dashboard-shell">
     <aside class="dashboard-sidebar">
         <span class="section-code">MEMBER / <?= e(str_pad((string) $user['id'], 4, '0', STR_PAD_LEFT)) ?></span>
         <div class="profile-block"><div class="profile-avatar"><?= e(mb_substr($user['username'], 0, 1)) ?></div><h1><?= e($user['username']) ?></h1><p><?= e(implode(' / ', array_map(static fn($r) => $r === 'user' ? '使用者' : $r, $user['roles'] ?? []))) ?></p></div>
-        <nav aria-label="會員中心"><a class="active" href="#overview">席位總覽</a><a href="#watchlist">監看名冊</a><a href="#orders">得標訂單</a><a href="#transactions">錢包流水</a><a href="#credit">信用軌跡</a></nav>
+        <nav aria-label="會員中心"><a class="active" href="#overview">席位總覽</a><a href="#watchlist">監看名冊</a><a href="#orders">得標訂單</a><a href="#transactions">錢包</a><a href="#credit">信用軌跡</a></nav>
         <div class="credit-card" id="credit"><span>目前信用</span><strong><?= (int) ($user['credit_score'] ?? 80) ?><small>/100</small></strong><i><b style="width: <?= min(100, (int) ($user['credit_score'] ?? 80)) ?>%"></b></i><p>近 90 天無違約紀錄</p></div>
     </aside>
     <div class="dashboard-content" id="overview">
@@ -15,8 +19,8 @@ $transactionLabels = ['payment' => '付款', 'refund' => '退款', 'payout' => '
         <div class="metric-grid">
             <article><span>監看中</span><strong><?= count($watched) ?></strong><small>其中 2 件將於今晚截標</small></article>
             <article><span>本月出價</span><strong>12</strong><small>4 次由代理系統執行</small></article>
-            <article><span>待處理訂單</span><strong><?= count($orders) ?></strong><small>請依交易時限完成操作</small></article>
-            <article class="metric-accent"><span>錢包餘額</span><strong><?= e(money($wallet['balance'] ?? 0)) ?></strong><small>付款會寫入交易流水</small></article>
+            <article><span>待付款訂單</span><strong><?= count($pendingPaymentOrders) ?></strong><small><?= $pendingPaymentTotal > 0 ? '待付 ' . e(money($pendingPaymentTotal)) : '目前沒有待付款' ?></small></article>
+            <article class="metric-accent"><span>錢包餘額</span><strong><?= e(money($walletBalance)) ?></strong><small><?= $pendingPaymentTotal > 0 ? '待付後 ' . e(money($balanceAfterPending)) : '可用於託管扣款' ?></small></article>
         </div>
         <section id="watchlist" class="dashboard-panel">
             <div class="panel-heading"><div><span>WATCHLIST</span><h3>監看名冊</h3></div><a href="<?= e(url('home')) ?>">查看全部 →</a></div>
@@ -51,7 +55,12 @@ $transactionLabels = ['payment' => '付款', 'refund' => '退款', 'payout' => '
             </tbody></table></div>
         </section>
         <section id="transactions" class="dashboard-panel">
-            <div class="panel-heading"><div><span>WALLET LEDGER</span><h3>交易紀錄</h3></div><span>餘額 <?= e(money($wallet['balance'] ?? 0)) ?></span></div>
+            <div class="panel-heading"><div><span>WALLET ACCOUNT</span><h3>錢包與交易紀錄</h3></div><span>餘額 <?= e(money($walletBalance)) ?></span></div>
+            <div class="wallet-overview">
+                <article><span>可用餘額</span><strong><?= e(money($walletBalance)) ?></strong><small>付款時直接扣除模擬餘額</small></article>
+                <article><span>待付款金額</span><strong><?= e(money($pendingPaymentTotal)) ?></strong><small><?= count($pendingPaymentOrders) ?> 筆訂單等待付款</small></article>
+                <article><span>預估付款後</span><strong class="<?= $balanceAfterPending < 0 ? 'negative' : '' ?>"><?= e(money($balanceAfterPending)) ?></strong><small><?= $balanceAfterPending < 0 ? '餘額不足，無法送出付款' : '足以支付目前待付款' ?></small></article>
+            </div>
             <div class="table-wrap"><table><thead><tr><th>時間</th><th>類型</th><th>訂單</th><th>金額</th><th>餘額</th><th>說明</th></tr></thead><tbody>
                 <?php foreach (($wallet['transactions'] ?? []) as $transaction): ?><tr>
                     <td><?= e(date('m/d H:i', strtotime($transaction['created_at']))) ?></td>
@@ -62,7 +71,7 @@ $transactionLabels = ['payment' => '付款', 'refund' => '退款', 'payout' => '
                     <td><?= e($transaction['description'] ?? '') ?></td>
                 </tr><?php endforeach; ?>
                 <?php if (empty($wallet['transactions'])): ?>
-                    <tr><td colspan="6" class="empty-state">尚無交易紀錄。</td></tr>
+                    <tr><td colspan="6" class="empty-state">尚無交易紀錄</td></tr>
                 <?php endif; ?>
             </tbody></table></div>
         </section>

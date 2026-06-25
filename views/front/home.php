@@ -92,6 +92,6 @@
     </div>
 
     <?php if (!$auctions): ?>
-        <div class="empty-state"><strong>找不到符合條件的拍品</strong><p>清除部分篩選條件後再試一次。</p><a class="button button-small" href="<?= e(url('home')) ?>">清除篩選</a></div>
+        <div class="empty-state"><strong>找不到符合條件的拍品</strong><p>清除部分篩選條件後再試一次</p><a class="button button-small" href="<?= e(url('home')) ?>">清除篩選</a></div>
     <?php endif; ?>
 </section>

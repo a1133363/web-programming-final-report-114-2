@@ -104,6 +104,7 @@ svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width:
     transition: background .2s ease, color .2s ease, border-color .2s ease;
 }
 .button:hover { color: var(--paper); background: var(--purple-deep); border-color: var(--purple); }
+.button:disabled { cursor: not-allowed; opacity: .55; color: var(--paper-muted); border-color: var(--line); background: rgba(241, 234, 219, .08); }
 .button-small { min-height: 40px; padding: 8px 16px; font-size: 13px; }
 .button-full { width: 100%; }
 .button-ghost { color: var(--paper); background: transparent; }
@@ -354,6 +355,36 @@ td:last-child, th:last-child { text-align: right; }
 .role-choice label > span { display: flex; min-height: 76px; flex-direction: column; justify-content: center; margin: 0; padding: 12px 15px; border: 1px solid var(--line); cursor: pointer; }
 .role-choice label > span small { color: var(--paper-muted); }
 .role-choice input:checked + span { border-color: var(--purple); background: rgba(140, 106, 184, .1); }
+.payment-card { width: min(100%, 720px); }
+.payment-wallet { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 16px; padding: 18px; border: 1px solid var(--line-strong); background: linear-gradient(135deg, rgba(86, 60, 118, .28), rgba(19, 16, 21, .88)); }
+.payment-wallet > div > span, .payment-summary > span, .payment-method > span, .recent-ledger > span { color: var(--paper-muted); font: 10px var(--mono); letter-spacing: .1em; }
+.payment-wallet strong { display: block; margin: 5px 0 2px; font: 600 clamp(1.7rem, 3vw, 2.6rem) var(--mono); letter-spacing: -.05em; }
+.payment-wallet small, .payment-summary small, .payment-method small { color: var(--paper-muted); font-size: 12px; }
+.status-ok { color: var(--safe); border-color: rgba(111, 168, 135, .55); background: rgba(111, 168, 135, .09); }
+.status-danger { color: var(--danger); border-color: rgba(208, 91, 98, .55); background: rgba(208, 91, 98, .1); }
+.payment-grid { display: grid; grid-template-columns: .95fr 1.05fr; gap: 12px; margin-bottom: 14px; }
+.payment-summary, .payment-breakdown, .payment-method, .payment-flow, .recent-ledger { border: 1px solid rgba(241, 234, 219, .1); background: rgba(19, 16, 21, .72); }
+.payment-summary { padding: 16px; }
+.payment-summary strong { display: block; margin: 7px 0 4px; font: 500 1.2rem/1.4 var(--serif); }
+.payment-breakdown { margin: 0; padding: 15px 16px; }
+.payment-breakdown div { display: flex; justify-content: space-between; gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.payment-breakdown div:last-child { border-bottom: 0; }
+.payment-breakdown dt { color: var(--paper-muted); font-size: 12px; }
+.payment-breakdown dd { margin: 0; font: 600 12px var(--mono); text-align: right; }
+.payment-flow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 17px; }
+.payment-flow span { display: flex; align-items: center; gap: 8px; padding: 12px; color: var(--paper-muted); border-right: 1px solid var(--line); font-size: 12px; }
+.payment-flow span:last-child { border-right: 0; }
+.payment-flow b { display: inline-grid; width: 22px; height: 22px; flex: 0 0 22px; place-items: center; color: var(--ink); border-radius: 50%; background: var(--copper); font: 700 11px var(--mono); }
+.payment-method { padding: 14px 16px; }
+.payment-method strong { display: block; margin: 3px 0; }
+.confirm-check { display: flex; align-items: flex-start; gap: 10px; padding: 14px; border: 1px solid var(--line); background: rgba(241, 234, 219, .035); }
+.confirm-check input { width: auto; min-height: auto; margin-top: 4px; }
+.confirm-check span { margin: 0; color: var(--paper-muted); font: 13px/1.6 var(--sans); letter-spacing: 0; }
+.recent-ledger { display: grid; gap: 9px; margin-top: 18px; padding: 15px 16px; }
+.recent-ledger div { display: grid; grid-template-columns: 70px 1fr auto; align-items: center; gap: 10px; padding-top: 9px; border-top: 1px solid var(--line); }
+.recent-ledger b { font-size: 12px; }
+.recent-ledger small { color: var(--paper-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.recent-ledger strong { font: 600 12px var(--mono); }
 
 /* Public wanted */
 .page-hero { padding: 175px max(20px, calc((100vw - var(--container)) / 2)) 85px; border-bottom: 1px solid var(--line); background: radial-gradient(circle at 80% 10%, rgba(208,91,98,.17), transparent 35%), #0e0b0f; }
@@ -409,6 +440,12 @@ td:last-child, th:last-child { text-align: right; }
 .panel-heading span { color: var(--paper-muted); font: 9px var(--mono); letter-spacing: .1em; }
 .panel-heading h3 { margin: 3px 0 0; font: 500 1.35rem var(--serif); }
 .panel-heading a { color: var(--copper); font-size: 12px; }
+.wallet-overview { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
+.wallet-overview article { padding: 17px; border: 1px solid var(--line); background: rgba(11, 9, 12, .56); }
+.wallet-overview span { color: var(--paper-muted); font: 10px var(--mono); letter-spacing: .08em; }
+.wallet-overview strong { display: block; margin: 7px 0 4px; overflow: hidden; font: 600 clamp(1.3rem, 2.2vw, 2rem) var(--mono); text-overflow: ellipsis; white-space: nowrap; }
+.wallet-overview small { color: var(--paper-muted); font-size: 11px; }
+.negative { color: var(--danger) !important; }
 .watch-list { display: grid; }
 .watch-list > a { display: grid; grid-template-columns: 74px 1fr auto; align-items: center; gap: 15px; padding: 12px 0; border-top: 1px solid var(--line); }
 .watch-list img { width: 74px; height: 62px; object-fit: cover; }
@@ -598,6 +635,14 @@ td:last-child, th:last-child { text-align: right; }
     .auth-seal { margin-top: 35px; }
     .auth-card { min-height: 630px; padding: 50px 22px; }
     .role-choice { grid-template-columns: 1fr; }
+    .payment-grid, .payment-flow, .wallet-overview { grid-template-columns: 1fr; }
+    .payment-wallet { align-items: flex-start; flex-direction: column; }
+    .payment-flow span { border-right: 0; border-bottom: 1px solid var(--line); }
+    .payment-flow span:last-child { border-bottom: 0; }
+    .payment-breakdown div { align-items: flex-start; flex-direction: column; gap: 2px; }
+    .payment-breakdown dd { text-align: left; }
+    .recent-ledger div { grid-template-columns: 1fr auto; }
+    .recent-ledger small { grid-column: 1 / -1; grid-row: 2; }
     .page-hero { padding: 135px 20px 65px; }
     .wanted-card { grid-template-columns: 54px 1fr; gap: 15px; }
     .wanted-level, .wanted-card time { grid-column: 2; text-align: left; }
