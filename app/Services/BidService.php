@@ -46,6 +46,9 @@ final class BidService
                 if ($proxyMax < $amount) {
                     throw new RuntimeException('代理出價上限不可低於本次出價。');
                 }
+                if (abs($proxyMax - round($proxyMax / 10000) * 10000) > 0.01) {
+                    throw new RuntimeException('代理出價上限請以 10,000 為單位輸入。');
+                }
                 $proxy = $pdo->prepare(
                     'INSERT INTO proxy_bids (auction_id, buyer_id, max_amount, is_active)
                      VALUES (:auction_id, :buyer_id, :max_amount, 1)

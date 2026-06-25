@@ -23,6 +23,18 @@ final class AdminController
         ], (new Report())->dashboard()));
     }
 
+    public function export(): never
+    {
+        RoleMiddleware::handle('admin');
+        $format = strtolower((string) ($_GET['format'] ?? 'excel'));
+        $rows = $this->reportRows((new Report())->dashboard());
+
+        if ($format === 'pdf') {
+            $this->downloadPdf($rows);
+        }
+        $this->downloadExcel($rows);
+    }
+
     public function review(): never
     {
         RoleMiddleware::handle('admin');
@@ -151,5 +163,95 @@ final class AdminController
             'pageTitle' => '操作紀錄',
             'logs' => $logs,
         ]);
+    }
+
+    private function reportRows(array $report): array
+    {
+        $totals = $report['totals'] ?? [];
+        $rows = [
+            ['項目', '數值'],
+            ['匯出時間', date('Y-m-d H:i:s')],
+            ['本月成交總額', money($totals['volume'] ?? 0)],
+            ['進行中拍賣', (string) (int) ($totals['active'] ?? 0)],
+            ['未結爭議', (string) (int) ($totals['disputes'] ?? 0)],
+            ['高風險比例', (string) ($totals['risk_ratio'] ?? 0) . '%'],
+            ['待審商品', (string) count($report['pending'] ?? [])],
+            ['高風險帳號', (string) count($report['wanted'] ?? [])],
+        ];
+
+        foreach (($report['daily'] ?? []) as $index => $amount) {
+            $rows[] = [date('m/d', strtotime('-' . (6 - (int) $index) . ' day')) . ' 成交額', money($amount)];
+        }
+
+        return $rows;
+    }
+
+    private function downloadExcel(array $rows): never
+    {
+        $filename = 'nocturne-report-' . date('Ymd-His') . '.xls';
+        header('Content-Type: application/vnd.ms-excel; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        echo "\xEF\xBB\xBF";
+        echo '<table border="1">';
+        foreach ($rows as $row) {
+            echo '<tr><td>' . e($row[0]) . '</td><td>' . e($row[1]) . '</td></tr>';
+        }
+        echo '</table>';
+        exit;
+    }
+
+    private function downloadPdf(array $rows): never
+    {
+        $lines = ['NOCTURNE 暗標局報表'];
+        foreach ($rows as $row) {
+            $lines[] = $row[0] . '：' . $row[1];
+        }
+        $pdf = $this->makePdf($lines);
+        $filename = 'nocturne-report-' . date('Ymd-His') . '.pdf';
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Content-Length: ' . strlen($pdf));
+        echo $pdf;
+        exit;
+    }
+
+    private function makePdf(array $lines): string
+    {
+        $content = "BT\n/F1 16 Tf\n50 790 Td\n";
+        foreach (array_slice($lines, 0, 28) as $index => $line) {
+            if ($index > 0) {
+                $content .= "0 -26 Td\n";
+            }
+            $content .= '<' . $this->pdfText($line) . "> Tj\n";
+        }
+        $content .= "ET\n";
+
+        $objects = [
+            "1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n",
+            "2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n",
+            "3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>\nendobj\n",
+            "4 0 obj\n<< /Type /Font /Subtype /Type0 /BaseFont /MSung-Light /Encoding /UniCNS-UTF16-H /DescendantFonts [6 0 R] >>\nendobj\n",
+            "5 0 obj\n<< /Length " . strlen($content) . " >>\nstream\n" . $content . "endstream\nendobj\n",
+            "6 0 obj\n<< /Type /Font /Subtype /CIDFontType0 /BaseFont /MSung-Light /CIDSystemInfo << /Registry (Adobe) /Ordering (CNS1) /Supplement 5 >> /FontDescriptor 7 0 R >>\nendobj\n",
+            "7 0 obj\n<< /Type /FontDescriptor /FontName /MSung-Light /Flags 6 /FontBBox [0 -160 1000 880] /ItalicAngle 0 /Ascent 880 /Descent -160 /CapHeight 700 /StemV 80 >>\nendobj\n",
+        ];
+
+        $pdf = "%PDF-1.4\n%\xE2\xE3\xCF\xD3\n";
+        $offsets = [];
+        foreach ($objects as $object) {
+            $offsets[] = strlen($pdf);
+            $pdf .= $object;
+        }
+        $xref = strlen($pdf);
+        $pdf .= "xref\n0 " . (count($objects) + 1) . "\n0000000000 65535 f \n";
+        foreach ($offsets as $offset) {
+            $pdf .= sprintf("%010d 00000 n \n", $offset);
+        }
+        return $pdf . "trailer\n<< /Size " . (count($objects) + 1) . " /Root 1 0 R >>\nstartxref\n" . $xref . "\n%%EOF";
+    }
+
+    private function pdfText(string $text): string
+    {
+        return strtoupper(bin2hex(mb_convert_encoding($text, 'UTF-16BE', 'UTF-8')));
     }
 }

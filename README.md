@@ -5,10 +5,10 @@
 ## 已實作功能
 
 - 訪客：首頁、分類、搜尋、風險篩選、拍賣詳情、倒數、出價紀錄、通緝名冊
-- 買家：註冊登入、收藏、手動出價、代理出價、得標與交付狀態
-- 賣家：商品刊登、圖片安全驗證、AI 描述 Mock、AI 風險建議、銷售概況
-- 管理員：審核商品、設定最終風險、通緝名單、全站報表、操作稽核
-- 系統：PDO Prepared Statements、`password_hash()`、Session 角色權限、CSRF、Cron 截標與郵件通知
+- 買家：註冊登入、收藏、手動出價、代理出價、錢包付款、交易流水、得標與交付狀態
+- 賣家：上架拍品、圖片安全驗證、AI 世界觀描述 Mock、AI 風險建議、銷售概況
+- 管理員：監控室、審核商品、設定最終風險、通緝名單、全站報表、Excel/PDF 匯出、操作稽核
+- 系統：PDO Prepared Statements、`password_hash()`、Session 角色權限、CSRF、模擬錢包、Cron 截標與郵件通知
 - 介面：響應式暗色拍賣目錄、鍵盤焦點、44px 觸控目標、reduced-motion、Chart.js 報表
 
 ## 快速啟動
@@ -36,6 +36,8 @@
 
 若尚未匯入 MySQL，網站會自動使用唯讀示範資料，仍可檢視所有主要版面。
 
+舊資料庫升級時，需補上 `wallets` 與 `wallet_transactions` 兩張資料表，讓付款、釋款、退款與交易紀錄可正常寫入。
+
 ## 示範帳號
 
 所有帳號密碼皆為 `demo1234`。
@@ -45,6 +47,8 @@
 | 買家 | `buyer@example.com` |
 | 賣家 | `seller@example.com` |
 | 管理員 | `admin@example.com` |
+
+無資料庫的唯讀示範模式可使用 `user@example.com` 與 `admin@example.com`。
 
 ## Cron
 

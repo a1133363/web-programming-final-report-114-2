@@ -14,6 +14,14 @@ INSERT INTO users (id, username, email, password_hash, credit_score, status, ema
     (5, '北塔代理人', 'tower@example.com', '$2y$10$OEQTe/V.8LtsJmo/hWJjMOtxJ6OaJNpqe3OfggecyIRw0Pxo5/JOi', 79, 'active', NOW()),
     (6, '空箱商人', 'emptybox@example.com', '$2y$10$OEQTe/V.8LtsJmo/hWJjMOtxJ6OaJNpqe3OfggecyIRw0Pxo5/JOi', 24, 'suspended', NOW());
 
+INSERT INTO wallets (user_id, balance) VALUES
+    (1, 1000000.00),
+    (2, 500000.00),
+    (3, 500000.00),
+    (4, 557000.00),
+    (5, 500000.00),
+    (6, 500000.00);
+
 INSERT INTO user_roles (user_id, role_id) VALUES
     (1, 2), (2, 1), (3, 1), (4, 1), (5, 1), (6, 1);
 
@@ -63,6 +71,9 @@ INSERT INTO orders (id, order_no, auction_id, buyer_id, seller_id, final_price, 
     (1, 'NO-20260618-0001', 5, 4, 2, 43000, 2150, 'pending_delivery', DATE_SUB(NOW(), INTERVAL 1 DAY), DATE_SUB(NOW(), INTERVAL 2 DAY));
 INSERT INTO payments (order_id, transaction_ref, method, amount, status, paid_at) VALUES
     (1, 'ESC-20260618-A91', 'escrow', 43000, 'paid', DATE_SUB(NOW(), INTERVAL 1 DAY));
+INSERT INTO wallet_transactions (user_id, order_id, payment_id, type, amount, balance_after, description, created_at)
+SELECT 4, 1, p.id, 'payment', 43000, 557000, '訂單 NO-20260618-0001 模擬付款', DATE_SUB(NOW(), INTERVAL 1 DAY)
+FROM payments p WHERE p.order_id = 1;
 INSERT INTO deliveries (order_id, delivery_status, tracking_code, shipped_at) VALUES
     (1, 'in_transit', 'NCT-X7F2A9', DATE_SUB(NOW(), INTERVAL 8 HOUR));
 

@@ -13,7 +13,7 @@
             <article class="metric-accent"><span>高風險比例</span><strong><?= e($totals['risk_ratio'] ?? 0) ?>%</strong><small>包含危險與禁止流通</small></article>
         </div>
         <section id="reports" class="admin-chart-grid">
-            <article class="chart-panel"><div class="panel-heading"><div><span>VOLUME / 7 DAYS</span><h3>成交金額趨勢</h3></div><span>NTD</span></div><div class="chart-box"><canvas id="volumeChart" data-values="<?= e(json_encode($daily)) ?>" aria-label="近七日成交金額折線圖"></canvas></div></article>
+            <article class="chart-panel"><div class="panel-heading"><div><span>VOLUME / 7 DAYS</span><h3>成交金額趨勢</h3></div><div class="panel-actions"><a class="button button-small button-ghost" href="<?= e(url('admin-export', ['format' => 'excel'])) ?>">Excel</a><a class="button button-small button-ghost" href="<?= e(url('admin-export', ['format' => 'pdf'])) ?>">PDF</a></div></div><div class="chart-box"><canvas id="volumeChart" data-values="<?= e(json_encode($daily)) ?>" aria-label="近七日成交金額折線圖"></canvas></div></article>
             <article class="chart-panel"><div class="panel-heading"><div><span>RISK DISTRIBUTION</span><h3>熱門商品分類</h3></div></div><div class="chart-box"><canvas id="categoryChart" data-values="<?= e(json_encode($categories)) ?>" aria-label="商品分類甜甜圈圖"></canvas></div></article>
         </section>
         <section id="reviews" class="dashboard-panel review-panel">
