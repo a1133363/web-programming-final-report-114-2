@@ -134,7 +134,7 @@ svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width:
 .catalog-header .section-code { display: flex; align-items: center; }
 .catalog-header h1 { margin: 12px 0 6px; font: 500 clamp(2.8rem, 5vw, 5rem)/1 var(--serif); letter-spacing: -.05em; }
 .catalog-header p { margin: 0; color: var(--paper-muted); }
-.catalog-search { display: grid; grid-template-columns: minmax(320px, 2fr) 1fr 1fr auto; gap: 12px; padding: 20px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--ink-2); }
+.catalog-search { display: grid; grid-template-columns: minmax(180px, 2fr) repeat(2, minmax(0, 1fr)) auto; gap: 12px; padding: 20px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--ink-2); }
 .category-tabs { display: flex; gap: 8px; margin: 18px 0 24px; overflow-x: auto; scrollbar-width: thin; }
 .category-tabs a { flex: 0 0 auto; padding: 8px 13px; color: var(--paper-muted); border: 1px solid var(--line); border-radius: 30px; font-size: 12px; }
 .category-tabs a:hover, .category-tabs a.active { color: var(--paper); border-color: var(--purple); background: rgba(140, 106, 184, .12); }
@@ -152,7 +152,7 @@ svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width:
 .section-heading.compact h2 { font-size: 1.7rem; }
 .search-ledger .section-heading { margin-bottom: 22px; }
 .search-ledger .section-heading h2 { font-size: 1.7rem; }
-.search-form { display: grid; grid-template-columns: minmax(320px, 2fr) 1fr 1fr auto; gap: 12px; }
+.search-form { display: grid; grid-template-columns: minmax(180px, 2fr) repeat(2, minmax(0, 1fr)) auto; gap: 12px; }
 label > span, .stack-form label > span, .dialog-grid label > span { display: block; margin-bottom: 7px; color: var(--paper-muted); font: 11px var(--mono); letter-spacing: .08em; }
 input, select, textarea {
     width: 100%;
@@ -174,14 +174,14 @@ textarea { resize: vertical; }
 .button-search { align-self: end; min-width: 132px; }
 .search-extra { grid-column: 1 / -1; margin-top: 5px; padding-top: 10px; border-top: 1px solid var(--line); }
 .search-extra summary { width: fit-content; color: var(--copper); font-size: 11px; cursor: pointer; }
-.search-extra > div { display: grid; grid-template-columns: 1fr 1fr 1fr auto; align-items: end; gap: 12px; margin-top: 14px; }
+.search-extra > div { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) auto; align-items: end; gap: 12px; margin-top: 14px; }
 .search-extra a { display: inline-flex; min-height: 48px; align-items: center; padding: 0 10px; color: var(--paper-muted); font-size: 11px; }
 .search-extra a:hover { color: var(--paper); }
 .demo-banner { margin-bottom: 24px; padding: 12px 16px; color: #c9c0b2; border-left: 2px solid var(--purple); background: rgba(140, 106, 184, .09); font-size: 13px; }
 .demo-banner > span { margin-right: 12px; color: #d9c0f6; font: 10px var(--mono); letter-spacing: .15em; }
 .demo-banner code { color: var(--copper); }
 
-.auction-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+.auction-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
 .auction-card { min-width: 0; border: 1px solid var(--line); background: var(--ink-2); transition: border-color .22s ease, transform .22s ease, box-shadow .22s ease; }
 .auction-card:hover { transform: translateY(-4px); border-color: rgba(192, 150, 109, .56); box-shadow: 0 18px 45px rgba(0, 0, 0, .28); }
 .auction-image { position: relative; display: block; aspect-ratio: 1/1; overflow: hidden; background: #0f0d10; }
@@ -197,13 +197,13 @@ textarea { resize: vertical; }
 .auction-card-body { padding: 17px 17px 15px; }
 .auction-category, .seller-line { display: flex; align-items: center; justify-content: space-between; color: var(--paper-muted); font: 10px var(--mono); letter-spacing: .04em; }
 .auction-category span:first-child { color: var(--copper); }
-.auction-card h2, .auction-card h3 { min-height: 58px; margin: 12px 0 18px; font: 500 1.25rem/1.45 var(--serif); }
+.auction-card h2, .auction-card h3 { min-height: 58px; margin: 12px 0 18px; font: 500 1.25rem/1.45 var(--serif); overflow-wrap: break-word; }
 .auction-card h2 a:hover, .auction-card h3 a:hover { color: #d8c4ef; }
-.auction-meta { display: grid; grid-template-columns: 1fr 1fr; padding: 15px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.auction-meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 15px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .auction-meta > div { display: flex; min-width: 0; flex-direction: column; }
 .auction-meta > div + div { padding-left: 13px; border-left: 1px solid var(--line); }
 .auction-meta span { color: var(--paper-muted); font-size: 10px; }
-.auction-meta strong { margin-top: 4px; overflow: hidden; font: 600 14px var(--mono); text-overflow: ellipsis; white-space: nowrap; }
+.auction-meta strong { display: block; margin-top: 4px; overflow: hidden; font: 600 14px var(--mono); text-overflow: ellipsis; white-space: nowrap; }
 .countdown strong { color: #d5b9f7; }
 .seller-line { justify-content: flex-start; gap: 7px; padding-top: 13px; }
 .seller-line > span:last-child { margin-left: auto; }
@@ -469,12 +469,12 @@ td:last-child, th:last-child { text-align: right; }
 .wanted-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
 
 @media (max-width: 1180px) {
-    .auction-grid { grid-template-columns: repeat(2, 1fr); }
-    .catalog-search { grid-template-columns: 2fr 1fr 1fr; }
+    .auction-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .catalog-search { grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr)); }
     .catalog-search .button-search { grid-column: 1 / -1; }
-    .search-form { grid-template-columns: 2fr 1fr 1fr; }
+    .search-form { grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr)); }
     .button-search { grid-column: 1 / -1; }
-    .search-extra > div { grid-template-columns: repeat(3, 1fr); }
+    .search-extra > div { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .search-extra a { grid-column: 1 / -1; }
     .category-grid { grid-template-columns: repeat(2, 1fr); }
     .metric-grid { grid-template-columns: repeat(2, 1fr); }
