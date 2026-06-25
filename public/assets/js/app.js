@@ -54,31 +54,56 @@ document.addEventListener('DOMContentLoaded', () => {
         button.addEventListener('click', () => button.closest('dialog')?.close());
     });
 
-    const formatDateTimeLocal = (date) => {
-        const pad = (value) => String(value).padStart(2, '0');
-        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
-    };
-
-    document.querySelectorAll('[data-auction-duration]').forEach((durationSelect) => {
-        const form = durationSelect.closest('form');
-        const startInput = form?.querySelector('[name="start_at"]');
-        const endInput = form?.querySelector('[name="end_at"]');
+    // flatpickr datetime pickers for seller auction dialog
+    document.querySelectorAll('.auction-dialog form').forEach((form) => {
+        if (typeof window.flatpickr === 'undefined') return;
+        const startInput = form.querySelector('[name="start_at"]');
+        const endInput = form.querySelector('[name="end_at"]');
+        const durationSelect = form.querySelector('[data-auction-duration]');
         if (!startInput || !endInput) return;
 
-        const updateEnd = () => {
-            if (!durationSelect.value || !startInput.value) return;
-            const start = new Date(startInput.value);
-            if (Number.isNaN(start.getTime())) return;
+        const startInstance = window.flatpickr(startInput, {
+            enableTime: true,
+            dateFormat: 'Y-m-d\\TH:i',
+            time_24hr: true,
+            minuteIncrement: 5,
+            minDate: 'today',
+            onChange: () => {
+                const startVal = startInstance.selectedDates[0];
+                if (!startVal) return;
+                endInstance.set('minDate', startVal);
+                const endVal = endInstance.selectedDates[0];
+                if (endVal && endVal < startVal) {
+                    endInstance.setDate(startVal, false);
+                }
+                updateEndFromDuration();
+            },
+        });
+
+        const endInstance = window.flatpickr(endInput, {
+            enableTime: true,
+            dateFormat: 'Y-m-d\\TH:i',
+            time_24hr: true,
+            minuteIncrement: 5,
+            minDate: 'today',
+            onChange: () => {
+                if (durationSelect) durationSelect.value = '';
+            },
+        });
+
+        const updateEndFromDuration = () => {
+            if (!durationSelect?.value || !startInstance.selectedDates[0]) return;
+            const start = startInstance.selectedDates[0];
             const end = new Date(start);
             end.setHours(end.getHours() + Number(durationSelect.value));
-            endInput.value = formatDateTimeLocal(end);
-            endInput.min = startInput.value;
+            endInstance.setDate(end, false);
         };
 
-        startInput.addEventListener('change', updateEnd);
-        durationSelect.addEventListener('change', updateEnd);
-        endInput.addEventListener('input', () => { durationSelect.value = ''; });
-        updateEnd();
+        durationSelect?.addEventListener('change', updateEndFromDuration);
+
+        if (startInstance.selectedDates[0]) {
+            endInstance.set('minDate', startInstance.selectedDates[0]);
+        }
     });
 
     document.querySelector('[data-ai-generate]')?.addEventListener('click', async (event) => {

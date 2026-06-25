@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" preserveAspectRatio="xMidYMid meet" role="img" aria-label="No image available">
+    <title>No image available</title>
+    <desc>Generic placeholder shown when an auction has no uploaded image.</desc>
+    <rect width="200" height="200" fill="#0b090c"/>
+    <rect x="1.5" y="1.5" width="197" height="197" fill="none" stroke="#1c1720" stroke-width="1.5"/>
+    <g transform="translate(100 78)" fill="none" stroke="#c0966d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.55">
+        <path d="M0 -28 22 -18 V10 c0 14 -9 25 -22 31 C-13 35 -22 24 -22 10 V-18 Z"/>
+        <path d="M-10 -1 H10 M-8 9 H8 M0 -8 V17"/>
+    </g>
+    <text x="100" y="140" text-anchor="middle" fill="#bdb3a2" font-family="Cascadia Mono, SFMono-Regular, Consolas, monospace" font-size="18" font-weight="600" letter-spacing="4">NO IMAGE</text>
+    <text x="100" y="166" text-anchor="middle" fill="#bdb3a2" font-family="Noto Sans TC, Microsoft JhengHei, system-ui, sans-serif" font-size="13" letter-spacing="3" opacity="0.7">映像待補</text>
+</svg>
