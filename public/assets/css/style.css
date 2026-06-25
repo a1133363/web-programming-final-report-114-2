@@ -130,7 +130,7 @@ svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width:
 .hero-status { position: absolute; right: clamp(20px, 4vw, 68px); bottom: 28px; left: clamp(20px, 4vw, 68px); display: flex; justify-content: space-between; color: var(--paper-muted); font: 10px var(--mono); letter-spacing: .08em; }
 .status-dot { display: inline-block; width: 7px; height: 7px; margin-right: 8px; border-radius: 50%; background: var(--safe); box-shadow: 0 0 8px var(--safe); }
 
-.catalog-shell { width: min(calc(100% - 40px), var(--container)); min-height: 100svh; margin: 0 auto; padding: 132px 0 100px; }
+.catalog-shell { max-width: var(--container); min-height: 100svh; margin: 0 auto; padding: 132px clamp(20px, 4vw, 48px) 100px; }
 .catalog-header { display: flex; align-items: end; justify-content: space-between; gap: 32px; margin-bottom: 28px; }
 .catalog-header .section-code { display: flex; align-items: center; }
 .catalog-header h1 { margin: 12px 0 6px; font: 500 clamp(2.8rem, 5vw, 5rem)/1 var(--serif); letter-spacing: -.05em; }
@@ -535,14 +535,14 @@ td:last-child, th:last-child { text-align: right; }
     .brand-mark { width: 35px; }
     .brand strong { font-size: 14px; }
     .brand small { display: none; }
-    .catalog-shell { width: calc(100% - 24px); padding: 105px 0 45px; }
+    .catalog-shell { padding: 105px clamp(16px, 4vw, 32px) 45px; }
     .catalog-header { align-items: flex-start; flex-direction: column; gap: 15px; }
     .catalog-header > .button { display: none; }
     .catalog-header h1 { font-size: 3.2rem; }
     .catalog-header p { font-size: 14px; }
     .catalog-search { grid-template-columns: 1fr 1fr; padding: 14px; }
     .catalog-search .search-main, .catalog-search .button-search, .catalog-search .search-extra { grid-column: 1 / -1; }
-    .category-tabs { padding: 0 0 5px; }
+    .category-tabs { padding: 0 12px 5px; }
     .catalog-result-bar span { display: none; }
     .hero { min-height: 760px; padding-right: 20px; padding-left: 20px; }
     .hero-backdrop { background-position: 63% center; }
