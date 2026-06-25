@@ -54,6 +54,33 @@ document.addEventListener('DOMContentLoaded', () => {
         button.addEventListener('click', () => button.closest('dialog')?.close());
     });
 
+    const formatDateTimeLocal = (date) => {
+        const pad = (value) => String(value).padStart(2, '0');
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    };
+
+    document.querySelectorAll('[data-auction-duration]').forEach((durationSelect) => {
+        const form = durationSelect.closest('form');
+        const startInput = form?.querySelector('[name="start_at"]');
+        const endInput = form?.querySelector('[name="end_at"]');
+        if (!startInput || !endInput) return;
+
+        const updateEnd = () => {
+            if (!durationSelect.value || !startInput.value) return;
+            const start = new Date(startInput.value);
+            if (Number.isNaN(start.getTime())) return;
+            const end = new Date(start);
+            end.setHours(end.getHours() + Number(durationSelect.value));
+            endInput.value = formatDateTimeLocal(end);
+            endInput.min = startInput.value;
+        };
+
+        startInput.addEventListener('change', updateEnd);
+        durationSelect.addEventListener('change', updateEnd);
+        endInput.addEventListener('input', () => { durationSelect.value = ''; });
+        updateEnd();
+    });
+
     document.querySelector('[data-ai-generate]')?.addEventListener('click', async (event) => {
         const button = event.currentTarget;
         const form = button.closest('form');
