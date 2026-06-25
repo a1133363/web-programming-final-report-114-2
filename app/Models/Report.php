@@ -30,9 +30,11 @@ final class Report
                     NULLIF((SELECT COUNT(*) FROM auctions), 0), 1) AS risk_ratio'
         )->fetch() ?: [];
         $pending = $pdo->query(
-            'SELECT a.*, u.username AS seller_name, c.name AS category_name
+            'SELECT a.*, u.username AS seller_name, c.name AS category_name,
+                    COALESCE(ai.file_path, "assets/images/placeholder.svg") AS image_path
              FROM auctions a JOIN users u ON u.id = a.seller_id
              JOIN categories c ON c.id = a.category_id
+             LEFT JOIN auction_images ai ON ai.auction_id = a.id AND ai.is_cover = 1
              WHERE a.status = "pending_review" ORDER BY a.created_at ASC LIMIT 8'
         )->fetchAll();
         $wanted = $pdo->query(

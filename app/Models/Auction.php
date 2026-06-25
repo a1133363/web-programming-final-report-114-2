@@ -45,7 +45,7 @@ final class Auction
 
         $sql = 'SELECT a.*, c.name AS category_name, u.username AS seller_name,
                        u.credit_score AS seller_credit,
-                       COALESCE(ai.file_path, "assets/images/item-chronometer.webp") AS image_path,
+COALESCE(ai.file_path, "assets/images/placeholder.svg") AS image_path,
                        (SELECT COUNT(*) FROM bids b WHERE b.auction_id = a.id) AS bid_count
                 FROM auctions a
                 JOIN categories c ON c.id = a.category_id
@@ -73,7 +73,7 @@ final class Auction
         $statement = $pdo->prepare(
             'SELECT a.*, c.name AS category_name, u.username AS seller_name,
                     u.credit_score AS seller_credit,
-                    COALESCE(ai.file_path, "assets/images/item-chronometer.webp") AS image_path,
+                    COALESCE(ai.file_path, "assets/images/placeholder.svg") AS image_path,
                     (SELECT COUNT(*) FROM bids b WHERE b.auction_id = a.id) AS bid_count
              FROM auctions a
              JOIN categories c ON c.id = a.category_id
