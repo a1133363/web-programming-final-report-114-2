@@ -39,7 +39,7 @@ $errorMessage = flash('error');
                 <a href="<?= e(url('seller')) ?>" <?= $currentPage === 'seller' ? 'aria-current="page"' : '' ?>>上架拍品</a>
                 <a href="<?= e(url('buyer')) ?>" <?= $currentPage === 'buyer' ? 'aria-current="page"' : '' ?>>交易中心</a>
             <?php endif; ?>
-            <a href="<?= e(url('wanted')) ?>" <?= $currentPage === 'wanted' ? 'aria-current="page"' : '' ?>>風險名冊</a>
+            <a href="<?= e(url('wanted')) ?>" <?= $currentPage === 'wanted' ? 'aria-current="page"' : '' ?>>通緝名單</a>
             <a href="<?= e(url('about')) ?>" <?= $currentPage === 'about' ? 'aria-current="page"' : '' ?>>關於平台</a>
             <?php if ($user): ?>
                 <?php if (has_role('admin')): ?>
@@ -77,7 +77,7 @@ $errorMessage = flash('error');
             <a href="<?= e(url('seller')) ?>" <?= $currentPage === 'seller' ? 'aria-current="page"' : '' ?>><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/><path d="M5 5h14v14H5z"/></svg><span>上架</span></a>
             <a href="<?= e(url('buyer')) ?>" <?= $currentPage === 'buyer' ? 'aria-current="page"' : '' ?>><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c.8-4.4 3.5-7 8-7s7.2 2.6 8 7"/></svg><span>交易</span></a>
         <?php endif; ?>
-        <a href="<?= e(url('wanted')) ?>" <?= $currentPage === 'wanted' ? 'aria-current="page"' : '' ?>><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 3.5 19h17L12 3Z"/><path d="M12 9v4M12 16h.01"/></svg><span>風險</span></a>
+        <a href="<?= e(url('wanted')) ?>" <?= $currentPage === 'wanted' ? 'aria-current="page"' : '' ?>><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 3.5 19h17L12 3Z"/><path d="M12 9v4M12 16h.01"/></svg><span>通緝</span></a>
         <a href="<?= e(url('about')) ?>" <?= $currentPage === 'about' ? 'aria-current="page"' : '' ?>><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg><span>關於</span></a>
         <?php if (has_role('admin')): ?>
             <a href="<?= e(url('admin')) ?>" <?= str_starts_with($currentPage, 'admin') ? 'aria-current="page"' : '' ?>><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 20 7v5c0 5-3.2 8.3-8 9-4.8-.7-8-4-8-9V7l8-4Z"/><path d="M9 12h6M12 9v6"/></svg><span>監控</span></a>
