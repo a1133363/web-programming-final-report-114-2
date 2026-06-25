@@ -66,5 +66,17 @@ $transactionLabels = ['payment' => '付款', 'refund' => '退款', 'payout' => '
                 <?php endif; ?>
             </tbody></table></div>
         </section>
+        <section id="credit" class="dashboard-panel">
+            <div class="panel-heading"><div><span>CREDIT TRACK</span><h3>信用軌跡</h3></div></div>
+            <div class="empty-state" style="padding: 40px; border: 1px solid var(--line-strong);">
+                <strong>信用席位等級：優良</strong>
+                <p style="margin: 15px 0;">當前信用評分：<?= (int) ($user['credit_score'] ?? 80) ?> / 100 分</p>
+                <div class="credit-meter" style="max-width: 300px; margin: 0 auto 20px;">
+                    <i><b style="width: <?= min(100, (int) ($user['credit_score'] ?? 80)) ?>%"></b></i>
+                </div>
+                <p style="font-size: 13px; max-width: 580px; margin: 0 auto;">信用紀錄說明：近 90 天內無任何拍賣違約、棄單或未付款紀錄。誠信等級將直接影響您託管付款的釋放速度以及單筆拍賣的最大出價額度。</p>
+            </div>
+        </section>
     </div>
 </section>
+

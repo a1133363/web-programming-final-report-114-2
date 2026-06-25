@@ -15,7 +15,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (difference <= 0) {
                 output.textContent = '已截標';
                 element.classList.add('is-ended');
+                element.classList.remove('is-urgent');
                 return;
+            }
+            if (difference > 0 && difference <= 3600000) {
+                element.classList.add('is-urgent');
+            } else {
+                element.classList.remove('is-urgent');
             }
             const days = Math.floor(difference / 86400000);
             const hours = Math.floor((difference % 86400000) / 3600000);
@@ -97,6 +103,78 @@ document.addEventListener('DOMContentLoaded', () => {
                 data: { labels: ['遺物','科技','情報','文獻'], datasets: [{ data: values, backgroundColor: ['#c0966d','#8c6ab8','#6fa887','#d05b62'], borderWidth: 0, spacing: 3 }] },
                 options: { responsive: true, maintainAspectRatio: false, cutout: '68%', plugins: { legend: { position: 'bottom', labels: { boxWidth: 9, usePointStyle: true, padding: 16 } } } }
             });
+        }
+    }
+
+    // 後台輕量級 Tab 切換邏輯 (買家與管理員後台)
+    const sidebar = document.querySelector('.dashboard-sidebar, .admin-sidebar');
+    if (sidebar) {
+        const navLinks = sidebar.querySelectorAll('nav a');
+        const contentContainer = document.querySelector('.dashboard-content, .admin-content');
+        
+        if (contentContainer) {
+            const heading = contentContainer.querySelector('.dashboard-heading, .admin-topbar');
+            const metrics = contentContainer.querySelector('.metric-grid');
+            const sections = contentContainer.querySelectorAll('.dashboard-panel, .admin-chart-grid, .wanted-admin, .review-panel');
+            
+            const switchTab = (targetHash) => {
+                const cleanHash = targetHash || '#overview';
+                
+                // 1. 更新側邊欄 active 樣式
+                navLinks.forEach((link) => {
+                    const href = link.getAttribute('href');
+                    if (href && href.startsWith('#')) {
+                        if (href === cleanHash) {
+                            link.classList.add('active');
+                        } else {
+                            link.classList.remove('active');
+                        }
+                    }
+                });
+                
+                // 2. 切換各區塊的顯示/隱藏
+                if (cleanHash === '#overview') {
+                    if (heading) heading.style.display = '';
+                    if (metrics) metrics.style.display = '';
+                    sections.forEach(sec => sec.style.display = '');
+                } else {
+                    if (heading) heading.style.display = 'none';
+                    if (metrics) metrics.style.display = 'none';
+                    
+                    sections.forEach((sec) => {
+                        const id = sec.getAttribute('id');
+                        if (id && `#${id}` === cleanHash) {
+                            sec.style.display = '';
+                        } else {
+                            sec.style.display = 'none';
+                        }
+                    });
+                }
+            };
+            
+            // 點擊事件綁定
+            navLinks.forEach((link) => {
+                const href = link.getAttribute('href');
+                if (href && href.startsWith('#')) {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        history.pushState(null, '', href);
+                        switchTab(href);
+                    });
+                }
+            });
+            
+            // 監聽上一頁下一頁
+            window.addEventListener('popstate', () => {
+                switchTab(window.location.hash);
+            });
+            
+            // 初始化選取狀態
+            if (window.location.hash) {
+                switchTab(window.location.hash);
+            } else {
+                switchTab('#overview');
+            }
         }
     }
 });
