@@ -599,7 +599,7 @@ td:last-child, th:last-child { text-align: right; }
     .credit-card { position: static; max-width: 330px; margin-top: 24px; }
     .admin-shell { display: block; padding-top: 76px; }
     .admin-sidebar { position: relative; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
-    .admin-sidebar nav { grid-template-columns: repeat(5, 1fr); }
+    .admin-sidebar nav { grid-template-columns: repeat(auto-fit, minmax(112px, 1fr)); }
     .system-health { position: static; margin-top: 20px; }
     .admin-chart-grid { grid-template-columns: 1fr; }
 }
