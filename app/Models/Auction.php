@@ -18,8 +18,10 @@ final class Auction
         $where = ['a.status = "active"', 'a.end_at > NOW()'];
         $params = [];
         if (!empty($filters['q'])) {
-            $where[] = '(a.title LIKE :q OR a.description LIKE :q OR u.username LIKE :q)';
-            $params['q'] = '%' . $filters['q'] . '%';
+            $where[] = '(a.title LIKE :q1 OR a.description LIKE :q2 OR u.username LIKE :q3)';
+            $params['q1'] = '%' . $filters['q'] . '%';
+            $params['q2'] = '%' . $filters['q'] . '%';
+            $params['q3'] = '%' . $filters['q'] . '%';
         }
         if (!empty($filters['risk'])) {
             $where[] = 'a.risk_level = :risk';
