@@ -19,6 +19,7 @@ $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $routes = [
     'GET' => [
         'home' => [HomeController::class, 'index'],
+        'about' => [HomeController::class, 'about'],
         'auction' => [AuctionController::class, 'show'],
         'wanted' => [HomeController::class, 'wanted'],
         'login' => [AuthController::class, 'loginForm'],

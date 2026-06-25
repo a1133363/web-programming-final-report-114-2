@@ -33,13 +33,18 @@ final class HomeController
         }
 
         View::render('front/home', [
-            'pageTitle' => '地下黑市拍賣會',
+            'pageTitle' => '探索拍品',
             'auctions' => $model->featured($filters),
             'categories' => $model->categories(),
             'filters' => $filters,
             'databaseAvailable' => Database::available(),
             'announcements' => $announcements,
         ]);
+    }
+
+    public function about(): void
+    {
+        View::render('front/about', ['pageTitle' => '關於暗標局']);
     }
 
     public function wanted(): void
