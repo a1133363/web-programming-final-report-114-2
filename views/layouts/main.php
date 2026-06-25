@@ -15,7 +15,10 @@ $errorMessage = flash('error');
     <meta name="theme-color" content="#0b090c">
     <title><?= e($pageTitle ?? '') ?>｜<?= e($appConfig['name']) ?></title>
     <link rel="stylesheet" href="<?= e(asset('css/style.css')) ?>">
+    <?php if ($currentPage === 'seller'): ?><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css"><?php endif; ?>
+    <?php if ($currentPage === 'seller'): ?><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/themes/dark.css"><?php endif; ?>
     <?php if ($currentPage === 'admin'): ?><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script><?php endif; ?>
+    <?php if ($currentPage === 'seller'): ?><script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js" defer></script><?php endif; ?>
     <script src="<?= e(asset('js/app.js')) ?>" defer></script>
 </head>
 <body data-page="<?= e($currentPage) ?>">
