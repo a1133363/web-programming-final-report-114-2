@@ -16,8 +16,7 @@
         <div class="demo-accounts">
             <span>快速填入示範身分</span>
             <div>
-                <button type="button" data-demo-email="buyer@example.com">買家</button>
-                <button type="button" data-demo-email="seller@example.com">賣家</button>
+                <button type="button" data-demo-email="user@example.com">使用者</button>
                 <button type="button" data-demo-email="admin@example.com">管理員</button>
             </div>
         </div>

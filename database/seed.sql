@@ -2,9 +2,8 @@ USE nocturne_auction;
 SET NAMES utf8mb4;
 
 INSERT INTO roles (id, name, display_name, description) VALUES
-    (1, 'buyer', '買家', '瀏覽、收藏、出價、付款與提出爭議'),
-    (2, 'seller', '賣家', '刊登拍賣品、交付與查看銷售統計'),
-    (3, 'admin', '拍賣管理員', '商品審核、會員管理、爭議裁決與報表');
+    (1, 'user', '使用者', '瀏覽、收藏、出價、付款、刊登拍賣品與管理交易'),
+    (2, 'admin', '拍賣管理員', '商品審核、會員管理、爭議裁決與報表');
 
 -- 所有示範帳號密碼：demo1234
 INSERT INTO users (id, username, email, password_hash, credit_score, status, email_verified_at) VALUES
@@ -16,7 +15,7 @@ INSERT INTO users (id, username, email, password_hash, credit_score, status, ema
     (6, '空箱商人', 'emptybox@example.com', '$2y$10$OEQTe/V.8LtsJmo/hWJjMOtxJ6OaJNpqe3OfggecyIRw0Pxo5/JOi', 24, 'suspended', NOW());
 
 INSERT INTO user_roles (user_id, role_id) VALUES
-    (1, 3), (2, 2), (3, 2), (4, 1), (5, 1), (6, 2);
+    (1, 2), (2, 1), (3, 1), (4, 1), (5, 1), (6, 1);
 
 INSERT INTO categories (id, name, code, description, risk_default, sort_order) VALUES
     (1, '古代遺物', 'REL', '來源跨越已失落文明的器物', 'suspicious', 10),

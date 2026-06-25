@@ -35,7 +35,7 @@ final class AuthController
             if ($demo) {
                 Auth::login($demo);
                 flash('success', '已進入示範身分。');
-                redirect($demo['roles'][0] === 'admin' ? 'admin' : ($demo['roles'][0] === 'seller' ? 'seller' : 'buyer'));
+                redirect($demo['roles'][0] === 'admin' ? 'admin' : 'buyer');
             }
         }
 
@@ -67,7 +67,7 @@ final class AuthController
             'username' => trim((string) ($_POST['username'] ?? '')),
             'email' => trim((string) ($_POST['email'] ?? '')),
             'password' => (string) ($_POST['password'] ?? ''),
-            'role' => in_array($_POST['role'] ?? '', ['buyer', 'seller'], true) ? $_POST['role'] : 'buyer',
+            'role' => 'user',
         ];
         $errors = [];
         if (mb_strlen($data['username']) < 2 || mb_strlen($data['username']) > 40) {
@@ -86,9 +86,9 @@ final class AuthController
 
         try {
             $id = (new User())->create($data);
-            Auth::login((new User())->findWithRoles($id) ?? ['id' => $id, 'username' => $data['username'], 'roles' => [$data['role']]]);
+            Auth::login((new User())->findWithRoles($id) ?? ['id' => $id, 'username' => $data['username'], 'roles' => ['user']]);
             flash('success', '席位已建立，初始信用分數為 80。');
-            redirect($data['role'] === 'seller' ? 'seller' : 'buyer');
+            redirect('buyer');
         } catch (\Throwable $exception) {
             flash('error', str_contains($exception->getMessage(), 'Duplicate') ? '此電子信箱已被使用。' : $exception->getMessage());
             redirect('register');
@@ -109,8 +109,7 @@ final class AuthController
             return null;
         }
         $users = [
-            'buyer@example.com' => ['id' => 91, 'username' => '霧港來客', 'email' => 'buyer@example.com', 'credit_score' => 86, 'roles' => ['buyer']],
-            'seller@example.com' => ['id' => 92, 'username' => '灰鴉收藏室', 'email' => 'seller@example.com', 'credit_score' => 92, 'roles' => ['seller']],
+            'user@example.com' => ['id' => 91, 'username' => '霧港來客', 'email' => 'user@example.com', 'credit_score' => 86, 'roles' => ['user']],
             'admin@example.com' => ['id' => 93, 'username' => '夜班監察員', 'email' => 'admin@example.com', 'credit_score' => 100, 'roles' => ['admin']],
         ];
         return $users[$email] ?? null;

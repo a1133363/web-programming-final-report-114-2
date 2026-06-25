@@ -1,5 +1,5 @@
 <section class="console-header">
-    <div><span class="section-code">SELLER CONSOLE</span><h1>賣家控制室</h1><p>建立拍賣草稿、使用 AI 輔助描述，並送交監察員審核。</p></div>
+    <div><span class="section-code">USER CONSOLE</span><h1>使用者控制室</h1><p>建立拍賣草稿、使用 AI 輔助描述，並送交監察員審核。</p></div>
     <button class="button" type="button" data-dialog-open="create-auction">建立新拍賣</button>
 </section>
 <section class="section seller-overview">
@@ -7,7 +7,7 @@
         <article><span>競標中</span><strong><?= count(array_filter($auctions, static fn($a) => $a['status'] === 'active')) ?></strong><small>即時追蹤出價紀錄</small></article>
         <article><span>待審核</span><strong><?= count(array_filter($auctions, static fn($a) => $a['status'] === 'pending_review')) ?></strong><small>平均 3.2 小時完成</small></article>
         <article><span>本月成交</span><strong><?= e(money(486000)) ?></strong><small>較上月 +18.2%</small></article>
-        <article class="metric-accent"><span>賣家信用</span><strong><?= (int) (current_user()['credit_score'] ?? 92) ?></strong><small>交付準時率 96%</small></article>
+        <article class="metric-accent"><span>使用者信用</span><strong><?= (int) (current_user()['credit_score'] ?? 92) ?></strong><small>交付準時率 96%</small></article>
     </div>
     <div class="dashboard-panel">
         <div class="panel-heading"><div><span>INVENTORY</span><h3>我的拍賣品</h3></div><span><?= count($auctions) ?> 件</span></div>
