@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\Core\Database;
 use App\Core\View;
 use App\Models\Auction;
 use App\Models\DemoData;
@@ -23,12 +22,16 @@ final class HomeController
         ];
         $model = new Auction();
         View::render('front/home', [
-            'pageTitle' => '地下黑市拍賣會',
+            'pageTitle' => '探索拍品',
             'auctions' => $model->featured($filters),
             'categories' => $model->categories(),
             'filters' => $filters,
-            'databaseAvailable' => Database::available(),
         ]);
+    }
+
+    public function about(): void
+    {
+        View::render('front/about', ['pageTitle' => '關於暗標局']);
     }
 
     public function wanted(): void
