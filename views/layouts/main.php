@@ -36,7 +36,9 @@ $errorMessage = flash('error');
             <a href="<?= e(url('about')) ?>" <?= $currentPage === 'about' ? 'aria-current="page"' : '' ?>>關於平台</a>
             <?php if ($user): ?>
                 <a href="<?= e(url('buyer')) ?>">我的席位</a>
-                <a href="<?= e(url('seller')) ?>">控制室</a>
+                <?php if (has_role('admin')): ?>
+                    <a href="<?= e(url('seller')) ?>">控制室</a>
+                <?php endif; ?>
                 <?php if (has_role('admin')): ?>
                     <a class="nav-admin" href="<?= e(url('admin')) ?>">監察後台</a>
                 <?php endif; ?>
