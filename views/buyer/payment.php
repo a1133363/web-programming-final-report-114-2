@@ -1,3 +1,8 @@
+<?php
+$wallet = $wallet ?? ['balance' => 0];
+$payAmount = (float) ($order['final_price'] ?? 0);
+$balanceAfter = (float) ($wallet['balance'] ?? 0) - $payAmount;
+?>
 <section class="auth-shell">
     <div class="auth-aside">
         <span class="section-code">PAYMENT / ESCROW</span>
@@ -12,6 +17,7 @@
             <p>賣家：<?= e($order['seller_name']) ?></p>
             <p>應付金額：<strong><?= e(money($order['final_price'])) ?></strong></p>
             <p>平台手續費：<?= e(money($order['platform_fee'] ?? 0)) ?></p>
+            <p>錢包餘額：<?= e(money($wallet['balance'] ?? 0)) ?><?= $balanceAfter >= 0 ? '，付款後 ' . e(money($balanceAfter)) : '，餘額不足' ?></p>
         </div>
         <form method="post" action="<?= e(url('buyer-pay')) ?>" class="stack-form">
             <?= csrf_field() ?>
@@ -22,7 +28,7 @@
                 <label><input type="radio" name="method" value="bank_transfer"><span><strong>銀行轉帳</strong><small>轉帳後需手動上傳憑證</small></span></label>
                 <label><input type="radio" name="method" value="virtual_credit"><span><strong>虛擬信用額度</strong><small>直接扣除帳戶餘額</small></span></label>
             </fieldset>
-            <button class="button button-full" type="submit">確認付款</button>
+            <button class="button button-full" type="submit" <?= $balanceAfter < 0 ? 'disabled' : '' ?>>確認付款</button>
         </form>
         <p class="auth-switch"><a href="<?= e(url('buyer')) ?>">← 返回會員中心</a></p>
     </div>

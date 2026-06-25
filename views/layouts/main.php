@@ -35,12 +35,10 @@ $errorMessage = flash('error');
             <a href="<?= e(url('wanted')) ?>" <?= $currentPage === 'wanted' ? 'aria-current="page"' : '' ?>>風險名冊</a>
             <a href="<?= e(url('about')) ?>" <?= $currentPage === 'about' ? 'aria-current="page"' : '' ?>>關於平台</a>
             <?php if ($user): ?>
-                <a href="<?= e(url('buyer')) ?>">我的席位</a>
+                <a href="<?= e(url('buyer')) ?>" <?= $currentPage === 'buyer' ? 'aria-current="page"' : '' ?>>我的席位</a>
+                <a href="<?= e(url('seller')) ?>" <?= $currentPage === 'seller' ? 'aria-current="page"' : '' ?>>上架拍品</a>
                 <?php if (has_role('admin')): ?>
-                    <a href="<?= e(url('seller')) ?>">控制室</a>
-                <?php endif; ?>
-                <?php if (has_role('admin')): ?>
-                    <a class="nav-admin" href="<?= e(url('admin')) ?>">監察後台</a>
+                    <a class="nav-admin" href="<?= e(url('admin')) ?>" <?= str_starts_with($currentPage, 'admin') ? 'aria-current="page"' : '' ?>>監控室</a>
                 <?php endif; ?>
                 <span class="user-chip"><span aria-hidden="true"></span><?= e($user['username']) ?></span>
                 <form method="post" action="<?= e(url('logout')) ?>">
@@ -71,7 +69,15 @@ $errorMessage = flash('error');
     <nav class="mobile-tabbar" aria-label="行動版主要導覽">
         <a href="<?= e(url('home')) ?>" <?= $browseActive ? 'aria-current="page"' : '' ?>><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h6v6H4zM14 5h6v6h-6zM4 15h6v4H4zM14 15h6v4h-6z"/></svg><span>商品</span></a>
         <a href="<?= e(url('wanted')) ?>" <?= $currentPage === 'wanted' ? 'aria-current="page"' : '' ?>><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 3.5 19h17L12 3Z"/><path d="M12 9v4M12 16h.01"/></svg><span>風險</span></a>
-        <a href="<?= e(url('about')) ?>" <?= $currentPage === 'about' ? 'aria-current="page"' : '' ?>><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg><span>關於</span></a>
+        <?php if ($user): ?>
+            <a href="<?= e(url('seller')) ?>" <?= $currentPage === 'seller' ? 'aria-current="page"' : '' ?>><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/><path d="M5 5h14v14H5z"/></svg><span>上架</span></a>
+        <?php endif; ?>
+        <?php if (has_role('admin')): ?>
+            <a href="<?= e(url('admin')) ?>" <?= str_starts_with($currentPage, 'admin') ? 'aria-current="page"' : '' ?>><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 20 7v5c0 5-3.2 8.3-8 9-4.8-.7-8-4-8-9V7l8-4Z"/><path d="M9 12h6M12 9v6"/></svg><span>監控</span></a>
+        <?php endif; ?>
+        <?php if (!$user): ?>
+            <a href="<?= e(url('about')) ?>" <?= $currentPage === 'about' ? 'aria-current="page"' : '' ?>><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg><span>關於</span></a>
+        <?php endif; ?>
         <a href="<?= e(url($user ? 'buyer' : 'login')) ?>" <?= in_array($currentPage, ['buyer', 'login', 'register'], true) ? 'aria-current="page"' : '' ?>><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c.8-4.4 3.5-7 8-7s7.2 2.6 8 7"/></svg><span><?= $user ? '我的' : '登入' ?></span></a>
     </nav>
 

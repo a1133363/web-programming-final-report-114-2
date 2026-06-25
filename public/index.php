@@ -32,6 +32,7 @@ $routes = [
         'admin' => [AdminController::class, 'index'],
         'admin-disputes' => [AdminController::class, 'disputes'],
         'admin-logs' => [AdminController::class, 'logs'],
+        'admin-export' => [AdminController::class, 'export'],
         'upload' => [UploadController::class, 'show'],
     ],
     'POST' => [

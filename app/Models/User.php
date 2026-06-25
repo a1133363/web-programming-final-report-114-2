@@ -69,6 +69,14 @@ final class User
                  SELECT :user_id, id FROM roles WHERE name = :role'
             );
             $role->execute(['user_id' => $userId, 'role' => $data['role'] ?? 'user']);
+            try {
+                $wallet = $pdo->prepare(
+                    'INSERT INTO wallets (user_id, balance) VALUES (:user_id, :balance)'
+                );
+                $wallet->execute(['user_id' => $userId, 'balance' => Wallet::INITIAL_BALANCE]);
+            } catch (\Throwable) {
+                // ponytail: older imported schemas may not have wallets yet; payment creates one after SQL update.
+            }
             $pdo->commit();
             return $userId;
         } catch (\Throwable $exception) {

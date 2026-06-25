@@ -16,7 +16,9 @@ DROP TABLE IF EXISTS notifications;
 DROP TABLE IF EXISTS reviews;
 DROP TABLE IF EXISTS disputes;
 DROP TABLE IF EXISTS deliveries;
+DROP TABLE IF EXISTS wallet_transactions;
 DROP TABLE IF EXISTS payments;
+DROP TABLE IF EXISTS wallets;
 DROP TABLE IF EXISTS orders;
 DROP TABLE IF EXISTS watchlists;
 DROP TABLE IF EXISTS proxy_bids;
@@ -47,6 +49,14 @@ CREATE TABLE users (
     UNIQUE KEY uq_users_username (username),
     KEY idx_users_status_credit (status, credit_score),
     CONSTRAINT chk_users_credit CHECK (credit_score BETWEEN 0 AND 100)
+) ENGINE=InnoDB;
+
+CREATE TABLE wallets (
+    user_id BIGINT UNSIGNED PRIMARY KEY,
+    balance DECIMAL(12,2) UNSIGNED NOT NULL DEFAULT 500000.00,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_wallets_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT chk_wallets_balance CHECK (balance >= 0)
 ) ENGINE=InnoDB;
 
 CREATE TABLE roles (
@@ -207,6 +217,24 @@ CREATE TABLE payments (
     UNIQUE KEY uq_payments_ref (transaction_ref),
     KEY idx_payments_status_paid (status, paid_at),
     CONSTRAINT fk_payments_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE wallet_transactions (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT UNSIGNED NOT NULL,
+    order_id BIGINT UNSIGNED NULL,
+    payment_id BIGINT UNSIGNED NULL,
+    type ENUM('deposit', 'payment', 'refund', 'payout') NOT NULL,
+    amount DECIMAL(12,2) UNSIGNED NOT NULL,
+    balance_after DECIMAL(12,2) UNSIGNED NOT NULL,
+    description VARCHAR(255) NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    KEY idx_wallet_transactions_user_created (user_id, created_at DESC),
+    KEY idx_wallet_transactions_order (order_id, type),
+    CONSTRAINT fk_wallet_transactions_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_wallet_transactions_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE SET NULL,
+    CONSTRAINT fk_wallet_transactions_payment FOREIGN KEY (payment_id) REFERENCES payments(id) ON DELETE SET NULL,
+    CONSTRAINT chk_wallet_transactions_amount CHECK (amount > 0)
 ) ENGINE=InnoDB;
 
 CREATE TABLE deliveries (
