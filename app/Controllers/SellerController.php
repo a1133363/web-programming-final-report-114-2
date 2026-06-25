@@ -10,6 +10,7 @@ use App\Core\Database;
 use App\Core\View;
 use App\Middleware\RoleMiddleware;
 use App\Models\Auction;
+use App\Models\Order;
 use App\Services\AiDescriptionService;
 use App\Services\RiskService;
 
@@ -17,18 +18,19 @@ final class SellerController
 {
     public function index(): void
     {
-        RoleMiddleware::handle('seller', 'admin');
+        RoleMiddleware::handle('user', 'admin');
         $model = new Auction();
         View::render('seller/dashboard', [
             'pageTitle' => '賣家控制室',
             'auctions' => $model->sellerAuctions((int) Auth::user()['id']),
             'categories' => $model->categories(),
+            'orders' => (new Order())->forSeller((int) Auth::user()['id']),
         ]);
     }
 
     public function create(): never
     {
-        RoleMiddleware::handle('seller', 'admin');
+        RoleMiddleware::handle('user', 'admin');
         if (!Csrf::verify($_POST['_csrf'] ?? null)) {
             flash('error', '表單已過期，請重新送出。');
             redirect('seller');
@@ -64,7 +66,7 @@ final class SellerController
 
     public function aiDescription(): never
     {
-        RoleMiddleware::handle('seller', 'admin');
+        RoleMiddleware::handle('user', 'admin');
         header('Content-Type: application/json; charset=utf-8');
         if (!Csrf::verify($_POST['_csrf'] ?? null)) {
             http_response_code(419);
@@ -75,6 +77,26 @@ final class SellerController
             'description' => (new AiDescriptionService())->generate((string) ($_POST['keywords'] ?? '')),
         ], JSON_UNESCAPED_UNICODE);
         exit;
+    }
+
+    public function updateDelivery(): never
+    {
+        RoleMiddleware::handle('user', 'admin');
+        if (!Csrf::verify($_POST['_csrf'] ?? null)) {
+            flash('error', '表單已過期，請重新操作。');
+            redirect('seller');
+        }
+        $orderId = filter_var($_POST['order_id'] ?? 0, FILTER_VALIDATE_INT) ?: 0;
+        $status = in_array($_POST['status'] ?? '', ['pending', 'prepared', 'in_transit', 'delivered'], true)
+            ? $_POST['status'] : 'pending';
+        $tracking = trim((string) ($_POST['tracking_code'] ?? ''));
+        try {
+            (new Order())->updateDelivery($orderId, $status, $tracking);
+            flash('success', '物流狀態已更新。');
+        } catch (\Throwable $e) {
+            flash('error', $e->getMessage());
+        }
+        redirect('seller');
     }
 
     private function storeImage(int $auctionId): void

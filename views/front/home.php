@@ -10,6 +10,19 @@
         <?php endif; ?>
     </header>
 
+    <?php if (!empty($announcements)): ?>
+        <div class="announcement-bar" aria-label="最新公告">
+            <?php foreach ($announcements as $ann): ?>
+                <article class="announcement-card">
+                    <span class="section-code">BROADCAST</span>
+                    <h3><?= e($ann['title']) ?></h3>
+                    <p><?= e($ann['body']) ?></p>
+                    <time datetime="<?= e($ann['published_at']) ?>"><?= e(date('Y.m.d', strtotime($ann['published_at']))) ?></time>
+                </article>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
     <form class="catalog-search" method="get" action="index.php">
         <input type="hidden" name="page" value="home">
         <label class="search-main">
@@ -72,7 +85,7 @@
                         <div><span>目前最高價</span><strong><?= e(money($auction['current_price'])) ?></strong></div>
                         <div class="countdown" data-countdown="<?= e(date(DATE_ATOM, strtotime($auction['end_at']))) ?>"><span>距離截標</span><strong>--:--:--</strong></div>
                     </div>
-                    <div class="seller-line"><span class="verified" aria-label="已驗證賣家">✓</span><?= e($auction['seller_name']) ?><span>信用 <?= (int) $auction['seller_credit'] ?></span></div>
+                    <div class="seller-line"><span class="verified" aria-label="已驗證賣家">✓</span><span class="seller-name"><?= e($auction['seller_name']) ?></span><span>信用 <?= (int) $auction['seller_credit'] ?></span></div>
                 </div>
             </article>
         <?php endforeach; ?>

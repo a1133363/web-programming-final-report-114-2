@@ -1,7 +1,7 @@
 <section class="admin-shell">
     <aside class="admin-sidebar">
         <div class="admin-brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M24 3 38 10v15c0 9-5.7 16-14 20C15.7 41 10 34 10 25V10L24 3Z"/><path d="M17 20h14M18.5 27h11M24 14v19"/></svg></span><div><strong>監察後台</strong><small>CONTROL ROOM</small></div></div>
-        <nav aria-label="後台功能"><a class="active" href="#overview">總覽</a><a href="#reviews">商品審核 <b><?= count($pending) ?></b></a><a href="#reports">報表中心</a><a href="#wanted">通緝名單</a><a href="#logs">操作紀錄</a></nav>
+        <nav aria-label="後台功能"><a class="active" href="#overview">總覽</a><a href="#reviews">商品審核 <b><?= count($pending) ?></b></a><a href="#reports">報表中心</a><a href="<?= e(url('admin-disputes')) ?>">爭議處理</a><a href="#wanted">通緝名單</a><a href="<?= e(url('admin-logs')) ?>">操作紀錄</a></nav>
         <div class="system-health"><span><i></i> SYSTEM HEALTH</span><strong>98.7%</strong><small><?= $databaseAvailable ? 'MySQL 已連線' : '示範資料模式' ?></small></div>
     </aside>
     <div class="admin-content" id="overview">
@@ -27,6 +27,15 @@
         <section id="wanted" class="dashboard-panel wanted-admin">
             <div class="panel-heading"><div><span>WATCH / WANTED</span><h3>高風險帳號</h3></div><a href="<?= e(url('wanted')) ?>">公開名冊 →</a></div>
             <?php foreach ($wanted as $item): ?><div class="wanted-row"><span class="wanted-dot level-<?= e($item['level']) ?>"></span><strong><?= e($item['username']) ?></strong><p><?= e($item['reason']) ?></p><span><?= e(strtoupper($item['level'])) ?></span></div><?php endforeach; ?>
+        </section>
+        <section id="announcements" class="dashboard-panel">
+            <div class="panel-heading"><div><span>BROADCAST</span><h3>發布公告</h3></div></div>
+            <form method="post" action="<?= e(url('admin-announce')) ?>" class="stack-form">
+                <?= csrf_field() ?>
+                <label><span>標題</span><input type="text" name="title" minlength="3" maxlength="120" placeholder="例：第六夜場風險協議更新" required></label>
+                <label><span>內文</span><textarea name="body" rows="3" minlength="10" placeholder="公告內容…" required></textarea></label>
+                <button class="button button-small" type="submit">發布公告</button>
+            </form>
         </section>
     </div>
 </section>

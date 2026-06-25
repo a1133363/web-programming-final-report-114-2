@@ -1,5 +1,5 @@
 <section class="console-header">
-    <div><span class="section-code">SELLER CONSOLE</span><h1>賣家控制室</h1><p>建立拍賣草稿、使用 AI 輔助描述，並送交監察員審核。</p></div>
+    <div><span class="section-code">USER CONSOLE</span><h1>使用者控制室</h1><p>建立拍賣草稿、使用 AI 輔助描述，並送交監察員審核。</p></div>
     <button class="button" type="button" data-dialog-open="create-auction">建立新拍賣</button>
 </section>
 <section class="section seller-overview">
@@ -7,12 +7,42 @@
         <article><span>競標中</span><strong><?= count(array_filter($auctions, static fn($a) => $a['status'] === 'active')) ?></strong><small>即時追蹤出價紀錄</small></article>
         <article><span>待審核</span><strong><?= count(array_filter($auctions, static fn($a) => $a['status'] === 'pending_review')) ?></strong><small>平均 3.2 小時完成</small></article>
         <article><span>本月成交</span><strong><?= e(money(486000)) ?></strong><small>較上月 +18.2%</small></article>
-        <article class="metric-accent"><span>賣家信用</span><strong><?= (int) (current_user()['credit_score'] ?? 92) ?></strong><small>交付準時率 96%</small></article>
+        <article class="metric-accent"><span>使用者信用</span><strong><?= (int) (current_user()['credit_score'] ?? 92) ?></strong><small>交付準時率 96%</small></article>
     </div>
     <div class="dashboard-panel">
         <div class="panel-heading"><div><span>INVENTORY</span><h3>我的拍賣品</h3></div><span><?= count($auctions) ?> 件</span></div>
         <div class="table-wrap"><table><thead><tr><th>拍品</th><th>分類</th><th>風險</th><th>出價</th><th>目前價格</th><th>狀態</th></tr></thead><tbody>
             <?php foreach ($auctions as $auction): ?><tr><td><strong><?= e($auction['lot_no']) ?></strong><br><?= e($auction['title']) ?></td><td><?= e($auction['category_name']) ?></td><td><span class="risk-text risk-<?= e($auction['risk_level']) ?>"><?= e(risk_label($auction['risk_level'])) ?></span></td><td><?= (int) ($auction['bid_count'] ?? 0) ?></td><td><?= e(money($auction['current_price'])) ?></td><td><span class="status-pill"><?= e(status_label($auction['status'])) ?></span></td></tr><?php endforeach; ?>
+        </tbody></table></div>
+    </div>
+    <div class="dashboard-panel">
+        <div class="panel-heading"><div><span>ORDERS</span><h3>待交付訂單</h3></div></div>
+        <div class="table-wrap"><table><thead><tr><th>訂單</th><th>物件</th><th>買家</th><th>成交金額</th><th>物流狀態</th><th>更新</th></tr></thead><tbody>
+            <?php foreach ($orders as $order): ?><tr>
+                <td>#<?= e($order['id']) ?></td>
+                <td><?= e($order['title']) ?></td>
+                <td><?= e($order['buyer_name']) ?></td>
+                <td><?= e(money($order['final_price'])) ?></td>
+                <td><?= e(status_label($order['delivery_status'] ?? 'pending')) ?><?= !empty($order['tracking_code']) ? '<br><small>' . e($order['tracking_code']) . '</small>' : '' ?></td>
+                <td>
+                    <?php if (in_array($order['status'], ['pending_delivery', 'disputed'], true)): ?>
+                        <form method="post" action="<?= e(url('seller-delivery')) ?>" class="inline-form">
+                            <?= csrf_field() ?>
+                            <input type="hidden" name="order_id" value="<?= (int) $order['id'] ?>">
+                            <select name="status">
+                                <option value="pending" <?= ($order['delivery_status'] ?? '') === 'pending' ? 'selected' : '' ?>>待處理</option>
+                                <option value="prepared" <?= ($order['delivery_status'] ?? '') === 'prepared' ? 'selected' : '' ?>>已備貨</option>
+                                <option value="in_transit" <?= ($order['delivery_status'] ?? '') === 'in_transit' ? 'selected' : '' ?>>運送中</option>
+                                <option value="delivered" <?= ($order['delivery_status'] ?? '') === 'delivered' ? 'selected' : '' ?>>已送達</option>
+                            </select>
+                            <input type="text" name="tracking_code" value="<?= e($order['tracking_code'] ?? '') ?>" placeholder="追蹤碼">
+                            <button class="button button-small" type="submit">更新</button>
+                        </form>
+                    <?php else: ?>
+                        <span class="status-pill"><?= e(status_label($order['status'])) ?></span>
+                    <?php endif; ?>
+                </td>
+            </tr><?php endforeach; ?>
         </tbody></table></div>
     </div>
 </section>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Core\Database;
 use App\Core\View;
 use App\Models\Auction;
 use App\Models\DemoData;
@@ -21,11 +22,23 @@ final class HomeController
             'ending' => in_array($_GET['ending'] ?? '', ['6', '12', '24', '72'], true) ? $_GET['ending'] : '',
         ];
         $model = new Auction();
+
+        $announcements = [];
+        $pdo = Database::connection();
+        if ($pdo) {
+            $announcements = $pdo->query(
+                'SELECT title, body, published_at FROM announcements
+                 WHERE status = "published" ORDER BY published_at DESC LIMIT 3'
+            )->fetchAll();
+        }
+
         View::render('front/home', [
             'pageTitle' => '探索拍品',
             'auctions' => $model->featured($filters),
             'categories' => $model->categories(),
             'filters' => $filters,
+            'databaseAvailable' => Database::available(),
+            'announcements' => $announcements,
         ]);
     }
 
