@@ -415,7 +415,7 @@ td:last-child, th:last-child { text-align: right; }
 .profile-avatar { display: grid; width: 64px; height: 64px; place-items: center; border: 1px solid var(--copper); border-radius: 50%; color: var(--copper); font: 500 1.8rem var(--serif); }
 .profile-block h1 { margin: 13px 0 2px; font: 500 1.4rem var(--serif); }
 .profile-block p { margin: 0; color: var(--paper-muted); font: 10px var(--mono); text-transform: uppercase; }
-.dashboard-sidebar nav { display: grid; gap: 5px; }
+.dashboard-sidebar nav { display: grid; gap: 5px; margin-bottom: 150px; }
 .dashboard-sidebar nav a { padding: 9px 12px; color: var(--paper-muted); border-left: 2px solid transparent; font-size: 13px; }
 .dashboard-sidebar nav a:hover, .dashboard-sidebar nav a.active { color: var(--paper); border-left-color: var(--purple); background: rgba(140,106,184,.08); }
 .credit-card { position: absolute; right: 30px; bottom: 30px; left: 30px; padding: 18px; border: 1px solid var(--line); }
