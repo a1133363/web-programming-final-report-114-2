@@ -34,7 +34,7 @@
 
 4. 開啟 `http://127.0.0.1:8000`。
 
-若尚未匯入 MySQL，網站會自動使用唯讀示範資料，仍可檢視所有主要版面。
+若尚未匯入 MySQL，登入與資料功能會顯示連線錯誤或空資料。
 
 舊資料庫升級時，需補上 `wallets` 與 `wallet_transactions` 兩張資料表，讓付款、釋款、退款與交易紀錄可正常寫入。
 
@@ -47,8 +47,6 @@
 | 買家 | `buyer@example.com` |
 | 賣家 | `seller@example.com` |
 | 管理員 | `admin@example.com` |
-
-無資料庫的唯讀示範模式可使用 `user@example.com` 與 `admin@example.com`。
 
 ## Cron
 
