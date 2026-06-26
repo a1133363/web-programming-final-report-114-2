@@ -11,7 +11,7 @@ $balanceAfterPending = $walletBalance - $pendingPaymentTotal;
     <aside class="dashboard-sidebar">
         <span class="section-code">MEMBER / <?= e(str_pad((string) $user['id'], 4, '0', STR_PAD_LEFT)) ?></span>
         <div class="profile-block"><div class="profile-avatar"><?php if (!empty($user['avatar_path'])): ?><img src="<?= e($user['avatar_path']) ?>" alt=""><?php else: ?><?= e(mb_substr($user['username'], 0, 1)) ?><?php endif; ?></div><h1><?= e($user['username']) ?></h1><p><?= e(implode(' / ', array_map(static fn($r) => $r === 'user' ? '使用者' : $r, $user['roles'] ?? []))) ?></p></div>
-        <nav aria-label="會員中心"><a class="active" href="#overview">席位總覽</a><a href="#watchlist">監看名冊</a><a href="#orders">得標訂單</a><a href="#transactions">錢包</a><a href="#credit">信用軌跡</a></nav>
+        <nav aria-label="會員中心"><a class="active" href="#overview">席位總覽</a><a href="#watchlist">監看名冊</a><a href="#orders">得標訂單</a><a href="#transactions">錢包</a><a href="#credit">信用軌跡</a><a href="<?= e(url('buyer-profile')) ?>">帳號管理</a></nav>
         <div class="credit-card"><span>目前信用</span><strong><?= (int) ($user['credit_score'] ?? 80) ?><small>/100</small></strong><i><b style="width: <?= min(100, (int) ($user['credit_score'] ?? 80)) ?>%"></b></i><p>近 90 天無違約紀錄</p></div>
     </aside>
     <div class="dashboard-content" id="overview">

@@ -410,7 +410,7 @@ td:last-child, th:last-child { text-align: right; }
 
 /* Dashboards */
 .dashboard-shell { display: grid; min-height: 100svh; grid-template-columns: 300px 1fr; padding-top: 86px; }
-.dashboard-sidebar { position: sticky; top: 86px; height: calc(100svh - 86px); padding: 45px 30px; border-right: 1px solid var(--line); background: #0e0b0f; }
+.dashboard-sidebar { position: sticky; top: 86px; height: calc(100svh - 86px); padding: 45px 30px; border-right: 1px solid var(--line); background: #0e0b0f; overflow-y: auto; }
 .profile-block { margin: 30px 0; padding-bottom: 26px; border-bottom: 1px solid var(--line); }
 .profile-avatar { display: grid; width: 64px; height: 64px; place-items: center; border: 1px solid var(--copper); border-radius: 50%; color: var(--copper); font: 500 1.8rem var(--serif); }
 .profile-block h1 { margin: 13px 0 2px; font: 500 1.4rem var(--serif); }
