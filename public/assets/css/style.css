@@ -418,7 +418,7 @@ td:last-child, th:last-child { text-align: right; }
 .dashboard-sidebar nav { display: grid; gap: 5px; }
 .dashboard-sidebar nav a { padding: 9px 12px; color: var(--paper-muted); border-left: 2px solid transparent; font-size: 13px; }
 .dashboard-sidebar nav a:hover, .dashboard-sidebar nav a.active { color: var(--paper); border-left-color: var(--purple); background: rgba(140,106,184,.08); }
-.credit-card { position: absolute; right: 30px; bottom: 30px; left: 30px; padding: 18px; border: 1px solid var(--line); }
+.credit-card { margin-top: 24px; padding: 18px; border: 1px solid var(--line); }
 .credit-card > span { color: var(--paper-muted); font-size: 10px; }
 .credit-card strong { display: block; font: 600 2.2rem var(--mono); }
 .credit-card strong small { color: var(--paper-muted); font-size: 12px; }
@@ -595,7 +595,7 @@ td:last-child, th:last-child { text-align: right; }
     .dashboard-shell { display: block; padding-top: 76px; }
     .dashboard-sidebar { position: relative; height: auto; padding: 35px 24px; border-right: 0; border-bottom: 1px solid var(--line); }
     .dashboard-sidebar nav { grid-template-columns: repeat(4, 1fr); }
-    .credit-card { position: static; max-width: 330px; margin-top: 24px; }
+    .credit-card { max-width: 330px; }
     .admin-shell { display: block; padding-top: 76px; }
     .admin-sidebar { position: relative; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
     .admin-sidebar nav { grid-template-columns: repeat(auto-fit, minmax(112px, 1fr)); }
