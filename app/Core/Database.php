@@ -38,8 +38,9 @@ final class Database
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES => false,
             ]);
-        } catch (PDOException) {
+        } catch (PDOException $e) {
             self::$connection = null;
+            error_log('Database connection failed: ' . $e->getMessage());
         }
 
         return self::$connection;

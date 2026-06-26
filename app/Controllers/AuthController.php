@@ -31,12 +31,17 @@ final class AuthController
         }
 
         if (!Database::available()) {
-            $demo = $this->demoUser((string) $email, $password);
-            if ($demo) {
-                Auth::login($demo);
-                flash('success', '已進入示範身分。');
-                redirect($demo['roles'][0] === 'admin' ? 'admin' : 'buyer');
+            $config = require dirname(__DIR__, 2) . '/config/app.php';
+            if (($config['env'] ?? 'production') === 'local') {
+                $demo = $this->demoUser((string) $email, $password);
+                if ($demo) {
+                    Auth::login($demo);
+                    flash('success', '已進入示範身分。');
+                    redirect($demo['roles'][0] === 'admin' ? 'admin' : 'buyer');
+                }
             }
+            flash('error', '系統暫時無法連線，請稍後再試。');
+            redirect('login');
         }
 
         $userModel = new User();
