@@ -7,7 +7,6 @@ namespace App\Controllers;
 use App\Core\Database;
 use App\Core\View;
 use App\Models\Auction;
-use App\Models\DemoData;
 
 final class HomeController
 {
@@ -37,7 +36,6 @@ final class HomeController
             'auctions' => $model->featured($filters),
             'categories' => $model->categories(),
             'filters' => $filters,
-            'databaseAvailable' => Database::available(),
             'announcements' => $announcements,
         ]);
     }
@@ -49,9 +47,19 @@ final class HomeController
 
     public function wanted(): void
     {
+        $wanted = [];
+        $pdo = Database::connection();
+        if ($pdo) {
+            $wanted = $pdo->query(
+                'SELECT u.username, w.reason, w.level, DATE(w.created_at) AS reported_at
+                 FROM wanted_list w JOIN users u ON u.id = w.user_id
+                 WHERE w.status = "active"
+                 ORDER BY FIELD(w.level, "critical", "high", "medium", "low")'
+            )->fetchAll();
+        }
         View::render('front/wanted', [
             'pageTitle' => '黑市通緝名單',
-            'wanted' => DemoData::wanted(),
+            'wanted' => $wanted,
         ]);
     }
 }

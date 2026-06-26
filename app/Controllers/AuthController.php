@@ -31,15 +31,6 @@ final class AuthController
         }
 
         if (!Database::available()) {
-            $config = require dirname(__DIR__, 2) . '/config/app.php';
-            if (($config['env'] ?? 'production') === 'local') {
-                $demo = $this->demoUser((string) $email, $password);
-                if ($demo) {
-                    Auth::login($demo);
-                    flash('success', '已進入示範身分。');
-                    redirect($demo['roles'][0] === 'admin' ? 'admin' : 'buyer');
-                }
-            }
             flash('error', '系統暫時無法連線，請稍後再試。');
             redirect('login');
         }
@@ -114,17 +105,5 @@ final class AuthController
             Auth::logout();
         }
         redirect('home');
-    }
-
-    private function demoUser(string $email, string $password): ?array
-    {
-        if ($password !== 'demo1234') {
-            return null;
-        }
-        $users = [
-            'user@example.com' => ['id' => 91, 'username' => '霧港來客', 'email' => 'user@example.com', 'credit_score' => 86, 'roles' => ['user']],
-            'admin@example.com' => ['id' => 93, 'username' => '夜班監察員', 'email' => 'admin@example.com', 'credit_score' => 100, 'roles' => ['admin']],
-        ];
-        return $users[$email] ?? null;
     }
 }

@@ -337,11 +337,6 @@ td:last-child, th:last-child { text-align: right; }
 .auth-heading p { margin: 0 0 30px; color: var(--paper-muted); }
 .auth-heading code { color: var(--copper); }
 .stack-form { display: grid; gap: 17px; }
-.demo-accounts { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--line); }
-.demo-accounts > span { display: block; margin-bottom: 9px; color: var(--paper-muted); font-size: 11px; }
-.demo-accounts > div { display: flex; gap: 8px; }
-.demo-accounts button { flex: 1; min-height: 40px; color: var(--paper-muted); border: 1px solid var(--line); background: transparent; }
-.demo-accounts button:hover { color: var(--paper); border-color: var(--purple); }
 .auth-switch { margin-top: 25px; color: var(--paper-muted); font-size: 13px; text-align: center; }
 .auth-switch a { color: var(--copper); }
 .profile-avatar-preview { display: grid; width: 90px; height: 90px; place-items: center; margin: 0 auto 25px; border: 1px solid var(--copper); border-radius: 50%; overflow: hidden; color: var(--copper); font: 500 2.5rem var(--serif); }

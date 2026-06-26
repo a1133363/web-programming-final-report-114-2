@@ -13,7 +13,7 @@ final class AuctionService
     {
         $pdo = Database::connection();
         if (!$pdo) {
-            throw new RuntimeException('無法連線 MySQL。');
+            throw new RuntimeException('資料庫連線失敗，請稍後再試。');
         }
 
         $ids = $pdo->query(

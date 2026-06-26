@@ -37,16 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
         event.currentTarget.closest('.toast-wrap')?.remove();
     });
 
-    document.querySelectorAll('[data-demo-email]').forEach((button) => {
-        button.addEventListener('click', () => {
-            const form = button.closest('.auth-card')?.querySelector('form');
-            if (!form) return;
-            form.querySelector('[name="email"]').value = button.dataset.demoEmail;
-            form.querySelector('[name="password"]').value = 'demo1234';
-            form.querySelector('[name="password"]').focus();
-        });
-    });
-
     document.querySelectorAll('[data-dialog-open]').forEach((button) => {
         button.addEventListener('click', () => document.getElementById(button.dataset.dialogOpen)?.showModal());
     });
