@@ -6,7 +6,7 @@
         <div class="auth-seal" aria-hidden="true"><span>N</span><small>VERIFIED<br>SESSION</small></div>
     </div>
     <div class="auth-card">
-        <div class="auth-heading"><span>SECURE GATEWAY</span><h2>會員登入</h2><p>所有示範帳號密碼均為 <code>demo1234</code></p></div>
+        <div class="auth-heading"><span>SECURE GATEWAY</span><h2>會員登入</h2><p>請輸入您的信箱與密碼以驗證席位。</p></div>
         <form method="post" action="<?= e(url('login')) ?>" class="stack-form">
             <?= csrf_field() ?>
             <label><span>電子信箱</span><input type="email" name="email" autocomplete="email" placeholder="name@example.com" required></label>

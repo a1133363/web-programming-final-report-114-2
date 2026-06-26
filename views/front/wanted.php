@@ -12,5 +12,4 @@
             <time datetime="<?= e($item['reported_at']) ?>">列管 <?= e($item['reported_at']) ?></time>
         </article>
     <?php endforeach; ?>
-    <div class="wanted-note"><strong>名冊處理原則</strong><p>管理員需保存證據、處理申訴，且所有新增、調整與解除列管操作都會寫入 <code>admin_logs</code>。</p></div>
 </section>
