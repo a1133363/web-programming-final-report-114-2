@@ -168,6 +168,39 @@ COALESCE(ai.file_path, "assets/images/placeholder.svg") AS image_path,
         return (int) $pdo->lastInsertId();
     }
 
+    public function delete(int $auctionId, int $userId, bool $isAdmin): void
+    {
+        $pdo = Database::connection();
+        if (!$pdo) {
+            throw new \RuntimeException('資料庫尚未連線，請先匯入 SQL。');
+        }
+        $pdo->beginTransaction();
+        try {
+            $stmt = $pdo->prepare('SELECT seller_id, title FROM auctions WHERE id = :id FOR UPDATE');
+            $stmt->execute(['id' => $auctionId]);
+            $auction = $stmt->fetch();
+            if (!$auction) {
+                throw new \RuntimeException('拍賣品不存在。');
+            }
+            if (!$isAdmin && (int) $auction['seller_id'] !== $userId) {
+                throw new \RuntimeException('你只能刪除自己的拍賣品。');
+            }
+            $orderCheck = $pdo->prepare('SELECT 1 FROM orders WHERE auction_id = :id LIMIT 1');
+            $orderCheck->execute(['id' => $auctionId]);
+            if ($orderCheck->fetchColumn()) {
+                throw new \RuntimeException('此拍賣品已有成交訂單，無法刪除。');
+            }
+            $delete = $pdo->prepare('DELETE FROM auctions WHERE id = :id');
+            $delete->execute(['id' => $auctionId]);
+            $pdo->commit();
+        } catch (\Throwable $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            throw $e;
+        }
+    }
+
     private function filterDemo(array $auctions, array $filters): array
     {
         $categoryMap = ['1' => '古代遺物', '2' => '異星科技', '3' => '失落情報', '4' => '禁忌文獻'];

@@ -11,8 +11,8 @@
     </div>
     <div class="dashboard-panel">
         <div class="panel-heading"><div><span>INVENTORY</span><h3>我的拍賣品</h3></div><span><?= count($auctions) ?> 件</span></div>
-        <div class="table-wrap"><table><thead><tr><th>拍品</th><th>分類</th><th>風險</th><th>出價</th><th>目前價格</th><th>狀態</th></tr></thead><tbody>
-            <?php foreach ($auctions as $auction): ?><tr><td><strong><?= e($auction['lot_no']) ?></strong><br><?= e($auction['title']) ?></td><td><?= e($auction['category_name']) ?></td><td><span class="risk-text risk-<?= e($auction['risk_level']) ?>"><?= e(risk_label($auction['risk_level'])) ?></span></td><td><?= (int) ($auction['bid_count'] ?? 0) ?></td><td><?= e(money($auction['current_price'])) ?></td><td><span class="status-pill"><?= e(status_label($auction['status'])) ?></span></td></tr><?php endforeach; ?>
+        <div class="table-wrap"><table><thead><tr><th>拍品</th><th>分類</th><th>風險</th><th>出價</th><th>目前價格</th><th>狀態</th><th>操作</th></tr></thead><tbody>
+            <?php foreach ($auctions as $auction): ?><tr><td><strong><?= e($auction['lot_no']) ?></strong><br><?= e($auction['title']) ?></td><td><?= e($auction['category_name']) ?></td><td><span class="risk-text risk-<?= e($auction['risk_level']) ?>"><?= e(risk_label($auction['risk_level'])) ?></span></td><td><?= (int) ($auction['bid_count'] ?? 0) ?></td><td><?= e(money($auction['current_price'])) ?></td><td><span class="status-pill"><?= e(status_label($auction['status'])) ?></span></td><td><form method="post" action="<?= e(url('seller-delete-auction')) ?>" class="inline-form" onsubmit="return confirm('確定刪除拍賣品「<?= e($auction['title']) ?>」？此操作無法復原。');"><?= csrf_field() ?><input type="hidden" name="auction_id" value="<?= (int) $auction['id'] ?>"><button class="button-danger button-small" type="submit">刪除</button></form></td></tr><?php endforeach; ?>
         </tbody></table></div>
     </div>
     <div class="dashboard-panel">

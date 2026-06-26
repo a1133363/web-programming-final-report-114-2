@@ -99,6 +99,23 @@ final class SellerController
         redirect('seller');
     }
 
+    public function deleteAuction(): never
+    {
+        RoleMiddleware::handle('user', 'admin');
+        if (!Csrf::verify($_POST['_csrf'] ?? null)) {
+            flash('error', '表單已過期，請重新操作。');
+            redirect('seller');
+        }
+        $auctionId = filter_var($_POST['auction_id'] ?? 0, FILTER_VALIDATE_INT) ?: 0;
+        try {
+            (new Auction())->delete($auctionId, (int) Auth::user()['id'], has_role('admin'));
+            flash('success', '拍賣品已刪除。');
+        } catch (\Throwable $e) {
+            flash('error', $e->getMessage());
+        }
+        redirect('seller');
+    }
+
     private function storeImage(int $auctionId): void
     {
         if (empty($_FILES['image']['tmp_name']) || !is_uploaded_file($_FILES['image']['tmp_name'])) {

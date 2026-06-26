@@ -9,6 +9,7 @@ use App\Core\Csrf;
 use App\Core\Database;
 use App\Core\View;
 use App\Middleware\RoleMiddleware;
+use App\Models\Auction;
 use App\Models\Order;
 use App\Models\Report;
 
@@ -163,6 +164,39 @@ final class AdminController
             'pageTitle' => '操作紀錄',
             'logs' => $logs,
         ]);
+    }
+
+    public function deleteAuction(): never
+    {
+        RoleMiddleware::handle('admin');
+        if (!Csrf::verify($_POST['_csrf'] ?? null)) {
+            flash('error', '表單已過期，請重新操作。');
+            redirect('admin');
+        }
+        $auctionId = filter_var($_POST['auction_id'] ?? 0, FILTER_VALIDATE_INT) ?: 0;
+        $pdo = Database::connection();
+        if (!$pdo) {
+            flash('error', '示範模式無法刪除，請先匯入資料庫。');
+            redirect('admin');
+        }
+        try {
+            (new Auction())->delete($auctionId, (int) Auth::user()['id'], true);
+            $log = $pdo->prepare(
+                'INSERT INTO admin_logs (admin_id, action, target_type, target_id, details, ip_address)
+                 VALUES (:admin_id, :action, "auction", :target_id, :details, :ip_address)'
+            );
+            $log->execute([
+                'admin_id' => Auth::user()['id'],
+                'action' => 'auction.delete',
+                'target_id' => $auctionId,
+                'details' => json_encode(['source' => 'admin_dashboard'], JSON_UNESCAPED_UNICODE),
+                'ip_address' => isset($_SERVER['REMOTE_ADDR']) ? @inet_pton($_SERVER['REMOTE_ADDR']) : null,
+            ]);
+            flash('success', '拍賣品已刪除。');
+        } catch (\Throwable $e) {
+            flash('error', $e->getMessage());
+        }
+        redirect('admin');
     }
 
     private function reportRows(array $report): array

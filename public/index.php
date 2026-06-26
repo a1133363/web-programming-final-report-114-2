@@ -46,10 +46,12 @@ $routes = [
         'buyer-review-submit' => [BuyerController::class, 'review'],
         'seller-create' => [SellerController::class, 'create'],
         'seller-delivery' => [SellerController::class, 'updateDelivery'],
+        'seller-delete-auction' => [SellerController::class, 'deleteAuction'],
         'ai-description' => [SellerController::class, 'aiDescription'],
         'admin-review' => [AdminController::class, 'review'],
         'admin-dispute-resolve' => [AdminController::class, 'resolveDispute'],
         'admin-announce' => [AdminController::class, 'announce'],
+        'admin-delete-auction' => [AdminController::class, 'deleteAuction'],
     ],
 ];
 
