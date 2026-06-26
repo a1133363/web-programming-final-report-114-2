@@ -91,7 +91,7 @@ final class SellerController
             ? $_POST['status'] : 'pending';
         $tracking = trim((string) ($_POST['tracking_code'] ?? ''));
         try {
-            (new Order())->updateDelivery($orderId, $status, $tracking);
+            (new Order())->updateDelivery($orderId, (int) Auth::user()['id'], $status, $tracking);
             flash('success', '物流狀態已更新。');
         } catch (\Throwable $e) {
             flash('error', $e->getMessage());
