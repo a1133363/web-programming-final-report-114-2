@@ -49,4 +49,13 @@ final class Auth
         unset($_SESSION['user_id'], $_SESSION['auth_user']);
         session_regenerate_id(true);
     }
+
+    public static function refresh(int $userId): void
+    {
+        $user = (new User())->findWithRoles($userId);
+        if ($user) {
+            unset($user['password_hash']);
+            $_SESSION['auth_user'] = $user;
+        }
+    }
 }

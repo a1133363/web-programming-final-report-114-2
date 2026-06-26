@@ -21,6 +21,85 @@ final class User
         return $user ?: null;
     }
 
+    public function findByUsername(string $username): ?array
+    {
+        $pdo = Database::connection();
+        if (!$pdo) {
+            return null;
+        }
+        $statement = $pdo->prepare('SELECT id FROM users WHERE username = :username LIMIT 1');
+        $statement->execute(['username' => $username]);
+        return $statement->fetch() ?: null;
+    }
+
+    public function updateProfile(int $userId, string $username, string $email, ?string $avatarPath = null): void
+    {
+        $pdo = Database::connection();
+        if (!$pdo) {
+            throw new \RuntimeException('資料庫尚未連線，請先匯入 SQL。');
+        }
+        $sql = 'UPDATE users SET username = :username, email = :email, updated_at = NOW()';
+        $params = ['username' => $username, 'email' => $email, 'id' => $userId];
+        if ($avatarPath !== null) {
+            $sql .= ', avatar_path = :avatar_path';
+            $params['avatar_path'] = $avatarPath;
+        }
+        $sql .= ' WHERE id = :id';
+        $statement = $pdo->prepare($sql);
+        $statement->execute($params);
+    }
+
+    public function updatePassword(int $userId, string $currentPassword, string $newPassword): void
+    {
+        $pdo = Database::connection();
+        if (!$pdo) {
+            throw new \RuntimeException('資料庫尚未連線，請先匯入 SQL。');
+        }
+        $statement = $pdo->prepare('SELECT password_hash FROM users WHERE id = :id LIMIT 1');
+        $statement->execute(['id' => $userId]);
+        $user = $statement->fetch();
+        if (!$user || !password_verify($currentPassword, $user['password_hash'])) {
+            throw new \RuntimeException('目前密碼不正確。');
+        }
+        if (strlen($newPassword) < 8) {
+            throw new \RuntimeException('新密碼至少需要 8 個字元。');
+        }
+        $update = $pdo->prepare('UPDATE users SET password_hash = :hash, updated_at = NOW() WHERE id = :id');
+        $update->execute(['hash' => password_hash($newPassword, PASSWORD_DEFAULT), 'id' => $userId]);
+    }
+
+    public function deleteAccount(int $userId): void
+    {
+        $pdo = Database::connection();
+        if (!$pdo) {
+            throw new \RuntimeException('資料庫尚未連線，請先匯入 SQL。');
+        }
+        $pdo->beginTransaction();
+        try {
+            $blockers = $pdo->prepare(
+                'SELECT
+                    (SELECT COUNT(*) FROM auctions WHERE seller_id = :id) AS auctions,
+                    (SELECT COUNT(*) FROM orders WHERE buyer_id = :id OR seller_id = :id) AS orders'
+            );
+            $blockers->execute(['id' => $userId]);
+            $counts = $blockers->fetch();
+            if ((int) $counts['auctions'] > 0 || (int) $counts['orders'] > 0) {
+                throw new \RuntimeException('帳號仍有拍賣品或訂單紀錄，無法刪除。');
+            }
+            $pdo->prepare('DELETE FROM bids WHERE buyer_id = :id')->execute(['id' => $userId]);
+            $pdo->prepare('DELETE FROM proxy_bids WHERE buyer_id = :id')->execute(['id' => $userId]);
+            $pdo->prepare('DELETE FROM watchlists WHERE user_id = :id')->execute(['id' => $userId]);
+            $pdo->prepare('DELETE FROM reviews WHERE reviewer_id = :id OR reviewee_id = :id')->execute(['id' => $userId]);
+            $pdo->prepare('DELETE FROM users WHERE id = :id')->execute(['id' => $userId]);
+            $pdo->commit();
+        } catch (\Throwable $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            throw $e;
+        }
+    }
+
     public function findWithRoles(int $id): ?array
     {
         $pdo = Database::connection();
