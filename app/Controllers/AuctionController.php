@@ -73,7 +73,7 @@ final class AuctionController
 
         $pdo = \App\Core\Database::connection();
         if (!$pdo) {
-            flash('error', '示範模式無法儲存收藏，請先匯入資料庫。');
+            flash('error', '資料庫連線失敗，請稍後再試。');
         } else {
             $statement = $pdo->prepare(
                 'INSERT IGNORE INTO watchlists (user_id, auction_id) VALUES (:user_id, :auction_id)'

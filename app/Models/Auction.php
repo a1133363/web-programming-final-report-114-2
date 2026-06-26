@@ -12,7 +12,7 @@ final class Auction
     {
         $pdo = Database::connection();
         if (!$pdo) {
-            return $this->filterDemo(DemoData::auctions(), $filters);
+            return [];
         }
 
         $where = ['a.status = "active"', 'a.end_at > NOW()'];
@@ -62,11 +62,6 @@ COALESCE(ai.file_path, "assets/images/placeholder.svg") AS image_path,
     {
         $pdo = Database::connection();
         if (!$pdo) {
-            foreach (DemoData::auctions() as $auction) {
-                if ((int) $auction['id'] === $id) {
-                    return $auction;
-                }
-            }
             return null;
         }
 
@@ -89,7 +84,7 @@ COALESCE(ai.file_path, "assets/images/placeholder.svg") AS image_path,
     {
         $pdo = Database::connection();
         if (!$pdo) {
-            return DemoData::bids($auctionId);
+            return [];
         }
 
         $statement = $pdo->prepare(
@@ -106,7 +101,7 @@ COALESCE(ai.file_path, "assets/images/placeholder.svg") AS image_path,
     {
         $pdo = Database::connection();
         if (!$pdo) {
-            return DemoData::categories();
+            return [];
         }
 
         return $pdo->query(
@@ -120,7 +115,7 @@ COALESCE(ai.file_path, "assets/images/placeholder.svg") AS image_path,
     {
         $pdo = Database::connection();
         if (!$pdo) {
-            return DemoData::auctions();
+            return [];
         }
         $statement = $pdo->prepare(
             'SELECT a.*, c.name AS category_name,
@@ -136,7 +131,7 @@ COALESCE(ai.file_path, "assets/images/placeholder.svg") AS image_path,
     {
         $pdo = Database::connection();
         if (!$pdo) {
-            throw new \RuntimeException('資料庫尚未連線，請先匯入 SQL。');
+            throw new \RuntimeException('資料庫連線失敗，請稍後再試。');
         }
         $statement = $pdo->prepare(
             'INSERT INTO auctions
@@ -172,7 +167,7 @@ COALESCE(ai.file_path, "assets/images/placeholder.svg") AS image_path,
     {
         $pdo = Database::connection();
         if (!$pdo) {
-            throw new \RuntimeException('資料庫尚未連線，請先匯入 SQL。');
+            throw new \RuntimeException('資料庫連線失敗，請稍後再試。');
         }
         $pdo->beginTransaction();
         try {
@@ -201,27 +196,4 @@ COALESCE(ai.file_path, "assets/images/placeholder.svg") AS image_path,
         }
     }
 
-    private function filterDemo(array $auctions, array $filters): array
-    {
-        $categoryMap = ['1' => '古代遺物', '2' => '異星科技', '3' => '失落情報', '4' => '禁忌文獻'];
-        return array_values(array_filter($auctions, static function (array $auction) use ($filters, $categoryMap): bool {
-            $query = trim((string) ($filters['q'] ?? ''));
-            if ($query !== '' && !str_contains($auction['title'] . $auction['description'] . $auction['seller_name'], $query)) {
-                return false;
-            }
-            if (!empty($filters['risk']) && $auction['risk_level'] !== $filters['risk']) {
-                return false;
-            }
-            if (!empty($filters['category']) && ($categoryMap[(string) $filters['category']] ?? '') !== $auction['category_name']) {
-                return false;
-            }
-            if (!empty($filters['min_price']) && (float) $auction['current_price'] < (float) $filters['min_price']) {
-                return false;
-            }
-            if (!empty($filters['max_price']) && (float) $auction['current_price'] > (float) $filters['max_price']) {
-                return false;
-            }
-            return empty($filters['ending']) || strtotime($auction['end_at']) <= time() + ((int) $filters['ending'] * 3600);
-        }));
-    }
 }

@@ -5,7 +5,7 @@ INSERT INTO roles (id, name, display_name, description) VALUES
     (1, 'user', '使用者', '瀏覽、收藏、出價、付款、刊登拍賣品與管理交易'),
     (2, 'admin', '拍賣管理員', '商品審核、會員管理、爭議裁決與報表');
 
--- 所有示範帳號密碼：demo1234
+-- 示範帳號密碼均為 demo1234（bcrypt hash）
 INSERT INTO users (id, username, email, password_hash, credit_score, status, email_verified_at) VALUES
     (1, '夜班監察員', 'admin@example.com', '$2y$10$OEQTe/V.8LtsJmo/hWJjMOtxJ6OaJNpqe3OfggecyIRw0Pxo5/JOi', 100, 'active', NOW()),
     (2, '灰鴉收藏室', 'seller@example.com', '$2y$10$OEQTe/V.8LtsJmo/hWJjMOtxJ6OaJNpqe3OfggecyIRw0Pxo5/JOi', 92, 'active', NOW()),

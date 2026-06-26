@@ -13,7 +13,7 @@ final class BidService
     {
         $pdo = Database::connection();
         if (!$pdo) {
-            throw new RuntimeException('示範模式無法寫入出價，請先匯入資料庫。');
+            throw new RuntimeException('資料庫連線失敗，請稍後再試。');
         }
 
         $pdo->beginTransaction();

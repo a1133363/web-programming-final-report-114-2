@@ -15,8 +15,7 @@ final class Order
         $pdo = Database::connection();
         if (!$pdo) {
             return null;
-        }
-        $statement = $pdo->prepare(
+        }        $statement = $pdo->prepare(
             'SELECT o.*, a.title, a.slug, u.username AS seller_name, bu.username AS buyer_name
              FROM orders o
              JOIN auctions a ON a.id = o.auction_id
@@ -32,14 +31,7 @@ final class Order
     {
         $pdo = Database::connection();
         if (!$pdo) {
-            return [[
-                'id' => 1042,
-                'title' => '北境玻璃種子',
-                'seller_name' => '灰鴉收藏室',
-                'final_price' => 43000,
-                'status' => 'pending_delivery',
-                'created_at' => date('Y-m-d H:i:s', strtotime('-2 days')),
-            ]];
+            return [];
         }
         $statement = $pdo->prepare(
             'SELECT o.*, a.title, u.username AS seller_name,
@@ -80,7 +72,7 @@ final class Order
         }
         $pdo = Database::connection();
         if (!$pdo) {
-            throw new \RuntimeException('示範模式無法付款，請先匯入資料庫。');
+            throw new \RuntimeException('資料庫連線失敗，請稍後再試。');
         }
         $pdo->beginTransaction();
         try {
@@ -146,7 +138,7 @@ final class Order
     {
         $pdo = Database::connection();
         if (!$pdo) {
-            throw new \RuntimeException('示範模式無法更新物流，請先匯入資料庫。');
+            throw new \RuntimeException('資料庫連線失敗，請稍後再試。');
         }
         $pdo->beginTransaction();
         try {
@@ -199,7 +191,7 @@ final class Order
     {
         $pdo = Database::connection();
         if (!$pdo) {
-            throw new \RuntimeException('示範模式無法提出爭議，請先匯入資料庫。');
+            throw new \RuntimeException('資料庫連線失敗，請稍後再試。');
         }
         $pdo->beginTransaction();
         try {
@@ -229,7 +221,7 @@ final class Order
     {
         $pdo = Database::connection();
         if (!$pdo) {
-            throw new \RuntimeException('示範模式無法評價，請先匯入資料庫。');
+            throw new \RuntimeException('資料庫連線失敗，請稍後再試。');
         }
         $statement = $pdo->prepare(
             'INSERT INTO reviews (order_id, reviewer_id, reviewee_id, rating, comment)
@@ -266,7 +258,7 @@ final class Order
     {
         $pdo = Database::connection();
         if (!$pdo) {
-            throw new \RuntimeException('示範模式無法處理爭議，請先匯入資料庫。');
+            throw new \RuntimeException('資料庫連線失敗，請稍後再試。');
         }
         $pdo->beginTransaction();
         try {

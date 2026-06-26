@@ -20,7 +20,6 @@ final class AdminController
         RoleMiddleware::handle('admin');
         View::render('admin/dashboard', array_merge([
             'pageTitle' => '監察後台',
-            'databaseAvailable' => Database::available(),
         ], (new Report())->dashboard()));
     }
 
@@ -50,7 +49,7 @@ final class AdminController
         $status = $decision === 'approve' ? 'active' : 'rejected';
         $pdo = Database::connection();
         if (!$pdo) {
-            flash('error', '示範模式無法執行審核，請先匯入資料庫。');
+            flash('error', '資料庫連線失敗，請稍後再試。');
             redirect('admin');
         }
         $pdo->beginTransaction();
@@ -130,7 +129,7 @@ final class AdminController
         }
         $pdo = Database::connection();
         if (!$pdo) {
-            flash('error', '示範模式無法發布公告，請先匯入資料庫。');
+            flash('error', '資料庫連線失敗，請稍後再試。');
             redirect('admin');
         }
         $statement = $pdo->prepare(
@@ -176,7 +175,7 @@ final class AdminController
         $auctionId = filter_var($_POST['auction_id'] ?? 0, FILTER_VALIDATE_INT) ?: 0;
         $pdo = Database::connection();
         if (!$pdo) {
-            flash('error', '示範模式無法刪除，請先匯入資料庫。');
+            flash('error', '資料庫連線失敗，請稍後再試。');
             redirect('admin');
         }
         try {

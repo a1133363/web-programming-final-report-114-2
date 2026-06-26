@@ -13,13 +13,6 @@
             <label><span>密碼</span><input type="password" name="password" autocomplete="current-password" placeholder="至少 8 個字元" required></label>
             <button class="button button-full" type="submit">驗證並登入</button>
         </form>
-        <div class="demo-accounts">
-            <span>快速填入示範身分</span>
-            <div>
-                <button type="button" data-demo-email="user@example.com">使用者</button>
-                <button type="button" data-demo-email="admin@example.com">管理員</button>
-            </div>
-        </div>
         <p class="auth-switch">尚未取得席位？<a href="<?= e(url('register')) ?>">建立匿名席位</a></p>
     </div>
 </section>

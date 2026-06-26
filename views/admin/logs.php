@@ -23,7 +23,7 @@
                             </tr>
                         <?php endforeach; ?>
                         <?php if (!$logs): ?>
-                            <tr><td colspan="6" class="empty-state">尚無操作紀錄，或目前處於示範模式</td></tr>
+                            <tr><td colspan="6" class="empty-state">尚無操作紀錄</td></tr>
                         <?php endif; ?>
                     </tbody>
                 </table>

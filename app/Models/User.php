@@ -36,7 +36,7 @@ final class User
     {
         $pdo = Database::connection();
         if (!$pdo) {
-            throw new \RuntimeException('資料庫尚未連線，請先匯入 SQL。');
+            throw new \RuntimeException('資料庫連線失敗，請稍後再試。');
         }
         $sql = 'UPDATE users SET username = :username, email = :email, updated_at = NOW()';
         $params = ['username' => $username, 'email' => $email, 'id' => $userId];
@@ -53,7 +53,7 @@ final class User
     {
         $pdo = Database::connection();
         if (!$pdo) {
-            throw new \RuntimeException('資料庫尚未連線，請先匯入 SQL。');
+            throw new \RuntimeException('資料庫連線失敗，請稍後再試。');
         }
         $statement = $pdo->prepare('SELECT password_hash FROM users WHERE id = :id LIMIT 1');
         $statement->execute(['id' => $userId]);
@@ -72,7 +72,7 @@ final class User
     {
         $pdo = Database::connection();
         if (!$pdo) {
-            throw new \RuntimeException('資料庫尚未連線，請先匯入 SQL。');
+            throw new \RuntimeException('資料庫連線失敗，請稍後再試。');
         }
         $pdo->beginTransaction();
         try {
@@ -104,7 +104,7 @@ final class User
     {
         $pdo = Database::connection();
         if (!$pdo) {
-            return $_SESSION['auth_user'] ?? null;
+            return null;
         }
 
         $statement = $pdo->prepare(
@@ -128,7 +128,7 @@ final class User
     {
         $pdo = Database::connection();
         if (!$pdo) {
-            throw new \RuntimeException('資料庫尚未連線，請先匯入 SQL。');
+            throw new \RuntimeException('資料庫連線失敗，請稍後再試。');
         }
 
         $pdo->beginTransaction();

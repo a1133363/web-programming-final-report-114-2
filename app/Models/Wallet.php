@@ -14,19 +14,7 @@ final class Wallet
     {
         $pdo = Database::connection();
         if (!$pdo) {
-            return [
-                'available' => false,
-                'balance' => 557000,
-                'transactions' => [[
-                    'type' => 'payment',
-                    'amount' => 43000,
-                    'balance_after' => 557000,
-                    'description' => '示範訂單付款',
-                    'created_at' => date('Y-m-d H:i:s', strtotime('-1 day')),
-                    'order_no' => 'DEMO-1042',
-                    'title' => '北境玻璃種子',
-                ]],
-            ];
+            return ['available' => false, 'balance' => 0, 'transactions' => []];
         }
 
         try {

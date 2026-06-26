@@ -13,11 +13,11 @@ final class Report
         $pdo = Database::connection();
         if (!$pdo) {
             return [
-                'totals' => ['volume' => 2849000, 'active' => 132, 'disputes' => 7, 'risk_ratio' => 18.4],
-                'daily' => [180000, 260000, 210000, 460000, 390000, 630000, 719000],
-                'categories' => [38, 24, 51, 19],
-                'pending' => array_slice(DemoData::auctions(), 0, 3),
-                'wanted' => DemoData::wanted(),
+                'totals' => ['volume' => 0, 'active' => 0, 'disputes' => 0, 'risk_ratio' => 0],
+                'daily' => [0, 0, 0, 0, 0, 0, 0],
+                'categories' => [0, 0, 0, 0],
+                'pending' => [],
+                'wanted' => [],
             ];
         }
 
