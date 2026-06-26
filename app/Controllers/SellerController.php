@@ -91,8 +91,25 @@ final class SellerController
             ? $_POST['status'] : 'pending';
         $tracking = trim((string) ($_POST['tracking_code'] ?? ''));
         try {
-            (new Order())->updateDelivery($orderId, $status, $tracking);
+            (new Order())->updateDelivery($orderId, (int) Auth::user()['id'], $status, $tracking);
             flash('success', '物流狀態已更新。');
+        } catch (\Throwable $e) {
+            flash('error', $e->getMessage());
+        }
+        redirect('seller');
+    }
+
+    public function deleteAuction(): never
+    {
+        RoleMiddleware::handle('user', 'admin');
+        if (!Csrf::verify($_POST['_csrf'] ?? null)) {
+            flash('error', '表單已過期，請重新操作。');
+            redirect('seller');
+        }
+        $auctionId = filter_var($_POST['auction_id'] ?? 0, FILTER_VALIDATE_INT) ?: 0;
+        try {
+            (new Auction())->delete($auctionId, (int) Auth::user()['id'], has_role('admin'));
+            flash('success', '拍賣品已刪除。');
         } catch (\Throwable $e) {
             flash('error', $e->getMessage());
         }

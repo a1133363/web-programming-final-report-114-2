@@ -70,7 +70,8 @@ final class AuctionService
                 if ($pdo->inTransaction()) {
                     $pdo->rollBack();
                 }
-                throw $exception;
+                error_log('closeExpired failed for auction ' . $id . ': ' . $exception->getMessage());
+                continue;
             }
         }
         return $closed;

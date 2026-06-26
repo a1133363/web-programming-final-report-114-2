@@ -110,6 +110,15 @@ final class BuyerController
             flash('error', '請填寫爭議原因（至少 5 個字）。');
             redirect('buyer');
         }
+        $order = (new Order())->find($orderId);
+        if (!$order || (int) $order['buyer_id'] !== (int) Auth::user()['id']) {
+            flash('error', '訂單不存在。');
+            redirect('buyer');
+        }
+        if (!in_array($order['status'], ['pending_delivery', 'completed', 'disputed'], true)) {
+            flash('error', '此訂單狀態無法提出爭議。');
+            redirect('buyer');
+        }
         try {
             (new Order())->createDispute($orderId, (int) Auth::user()['id'], $reason);
             flash('success', '爭議已提交，管理員將介入處理。');
@@ -156,6 +165,10 @@ final class BuyerController
         $order = (new Order())->find($orderId);
         if (!$order || (int) $order['buyer_id'] !== (int) Auth::user()['id']) {
             flash('error', '訂單不存在。');
+            redirect('buyer');
+        }
+        if ($order['status'] !== 'completed') {
+            flash('error', '訂單完成後才能評價。');
             redirect('buyer');
         }
         try {

@@ -142,7 +142,7 @@ final class Order
         }
     }
 
-    public function updateDelivery(int $orderId, string $status, string $trackingCode = ''): void
+    public function updateDelivery(int $orderId, int $sellerId, string $status, string $trackingCode = ''): void
     {
         $pdo = Database::connection();
         if (!$pdo) {
@@ -150,6 +150,16 @@ final class Order
         }
         $pdo->beginTransaction();
         try {
+            $orderStatement = $pdo->prepare('SELECT * FROM orders WHERE id = :id FOR UPDATE');
+            $orderStatement->execute(['id' => $orderId]);
+            $order = $orderStatement->fetch();
+            if (!$order || (int) $order['seller_id'] !== $sellerId) {
+                throw new \RuntimeException('訂單不存在或不屬於目前賣家。');
+            }
+            if (!in_array($order['status'], ['pending_delivery', 'disputed'], true)) {
+                throw new \RuntimeException('此訂單狀態無法更新物流。');
+            }
+
             $upsert = $pdo->prepare(
                 'INSERT INTO deliveries (order_id, delivery_status, tracking_code, shipped_at)
                  VALUES (:order_id, :status, :tracking, NOW())

@@ -14,14 +14,13 @@ final class Auth
             return null;
         }
 
-        if (isset($_SESSION['auth_user']) && is_array($_SESSION['auth_user'])) {
-            return $_SESSION['auth_user'];
-        }
-
         $user = (new User())->findWithRoles((int) $_SESSION['user_id']);
-        if ($user) {
-            $_SESSION['auth_user'] = $user;
+        if (!$user || ($user['status'] ?? 'active') !== 'active') {
+            self::logout();
+            return null;
         }
+        unset($user['password_hash']);
+        $_SESSION['auth_user'] = $user;
 
         return $user;
     }
@@ -41,6 +40,7 @@ final class Auth
     {
         session_regenerate_id(true);
         $_SESSION['user_id'] = (int) $user['id'];
+        unset($user['password_hash']);
         $_SESSION['auth_user'] = $user;
     }
 
