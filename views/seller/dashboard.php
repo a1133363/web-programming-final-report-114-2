@@ -47,6 +47,15 @@
     </div>
 </section>
 
+<?php
+$nowMin = (int) date('i');
+$ceilMin = (int) (ceil($nowMin / 5) * 5) % 60;
+$ceilHour = (int) date('H');
+if ($nowMin > 55) { $ceilHour = ($ceilHour + 1) % 24; }
+$defaultStartTs = mktime($ceilHour, $ceilMin);
+$defaultStartAt = date('Y-m-d\TH:i', $defaultStartTs);
+$defaultEndAt = date('Y-m-d\TH:i', $defaultStartTs + 72 * 3600);
+?>
 <dialog id="create-auction" class="auction-dialog">
     <form method="post" action="<?= e(url('seller-create')) ?>" enctype="multipart/form-data">
         <?= csrf_field() ?>
@@ -62,9 +71,10 @@
             <label class="span-2"><span>商品描述</span><textarea name="description" rows="5" minlength="20" placeholder="描述來源、外觀、已知異常與交付內容…" required></textarea></label>
             <label><span>起標價</span><input type="number" name="starting_price" min="1" step="1" required></label>
             <label><span>底價（選填）</span><input type="number" name="reserve_price" min="0" step="1"></label>
-            <label><span>最低加價</span><input type="number" name="min_increment" min="1" step="1" required></label>
-            <label><span>開始時間</span><input type="datetime-local" name="start_at" required></label>
-            <label><span>結束時間</span><input type="datetime-local" name="end_at" required></label>
+            <label class="span-2"><span>最低加價</span><input type="number" name="min_increment" min="1" step="1" required></label>
+            <label class="time-picker-label"><span>開始時間</span><input type="text" name="start_at" class="time-picker-input" value="<?= e($defaultStartAt) ?>" readonly required></label>
+            <label><span>拍賣長度</span><select data-auction-duration><option value="12">12 小時</option><option value="24">1 天</option><option value="72" selected>3 天</option><option value="168">7 天</option><option value="">自訂結束時間</option></select></label>
+            <label class="time-picker-label"><span>結束時間</span><input type="text" name="end_at" class="time-picker-input" value="<?= e($defaultEndAt) ?>" readonly required></label>
         </div>
         <p class="form-note">送出後狀態為「待審核」，AI 風險建議不會直接取代管理員判斷。</p>
         <button class="button button-full" type="submit">送交監察員審核</button>

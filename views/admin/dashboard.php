@@ -1,7 +1,7 @@
 <section class="admin-shell">
     <aside class="admin-sidebar">
         <div class="admin-brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M24 3 38 10v15c0 9-5.7 16-14 20C15.7 41 10 34 10 25V10L24 3Z"/><path d="M17 20h14M18.5 27h11M24 14v19"/></svg></span><div><strong>監察後台</strong><small>CONTROL ROOM</small></div></div>
-        <nav aria-label="後台功能"><a class="active" href="#overview">總覽</a><a href="#reviews">商品審核 <b><?= count($pending) ?></b></a><a href="#reports">報表中心</a><a href="<?= e(url('admin-disputes')) ?>">爭議處理</a><a href="#wanted">通緝名單</a><a href="<?= e(url('admin-logs')) ?>">操作紀錄</a></nav>
+        <nav aria-label="後台功能"><a class="active" href="<?= e(url('admin')) ?>#overview">總覽</a><a href="<?= e(url('admin')) ?>#reviews">商品審核 <b><?= count($pending) ?></b></a><a href="<?= e(url('admin')) ?>#reports">報表中心</a><a href="<?= e(url('admin-disputes')) ?>">爭議處理</a><a href="<?= e(url('admin')) ?>#wanted">通緝名單</a><a href="<?= e(url('admin-logs')) ?>">操作紀錄</a></nav>
         <div class="system-health"><span><i></i> SYSTEM HEALTH</span><strong>98.7%</strong><small><?= $databaseAvailable ? 'MySQL 已連線' : '示範資料模式' ?></small></div>
     </aside>
     <div class="admin-content" id="overview">
@@ -13,7 +13,7 @@
             <article class="metric-accent"><span>高風險比例</span><strong><?= e($totals['risk_ratio'] ?? 0) ?>%</strong><small>包含危險與禁止流通</small></article>
         </div>
         <section id="reports" class="admin-chart-grid">
-            <article class="chart-panel"><div class="panel-heading"><div><span>VOLUME / 7 DAYS</span><h3>成交金額趨勢</h3></div><span>NTD</span></div><div class="chart-box"><canvas id="volumeChart" data-values="<?= e(json_encode($daily)) ?>" aria-label="近七日成交金額折線圖"></canvas></div></article>
+            <article class="chart-panel"><div class="panel-heading"><div><span>VOLUME / 7 DAYS</span><h3>成交金額趨勢</h3></div><div class="panel-actions"><a class="button button-small button-ghost" href="<?= e(url('admin-export', ['format' => 'excel'])) ?>">Excel</a><a class="button button-small button-ghost" href="<?= e(url('admin-export', ['format' => 'pdf'])) ?>">PDF</a></div></div><div class="chart-box"><canvas id="volumeChart" data-values="<?= e(json_encode($daily)) ?>" aria-label="近七日成交金額折線圖"></canvas></div></article>
             <article class="chart-panel"><div class="panel-heading"><div><span>RISK DISTRIBUTION</span><h3>熱門商品分類</h3></div></div><div class="chart-box"><canvas id="categoryChart" data-values="<?= e(json_encode($categories)) ?>" aria-label="商品分類甜甜圈圖"></canvas></div></article>
         </section>
         <section id="reviews" class="dashboard-panel review-panel">

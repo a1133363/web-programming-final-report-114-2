@@ -35,7 +35,7 @@
                     <?= csrf_field() ?>
                     <input type="hidden" name="auction_id" value="<?= (int) $auction['id'] ?>">
                     <label><span>本次出價</span><input type="number" name="amount" min="<?= (float) $auction['current_price'] + (float) $auction['min_increment'] ?>" step="<?= (float) $auction['min_increment'] ?>" value="<?= (float) $auction['current_price'] + (float) $auction['min_increment'] ?>" required></label>
-                    <label><span>代理出價上限 <small>選填</small></span><input type="number" name="proxy_max" min="<?= (float) $auction['current_price'] + (float) $auction['min_increment'] ?>" step="<?= (float) $auction['min_increment'] ?>" placeholder="系統只會按最低幅度加價"></label>
+                    <label><span>代理出價上限 <small>選填，以萬為單位</small></span><input type="number" name="proxy_max" min="<?= (float) $auction['current_price'] + (float) $auction['min_increment'] ?>" step="10000" placeholder="例：200000"></label>
                     <button class="button button-full" type="submit">確認出價</button>
                 </form>
                 <form class="watch-form" method="post" action="<?= e(url('watch')) ?>">

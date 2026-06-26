@@ -11,6 +11,7 @@ use App\Core\View;
 use App\Middleware\AuthMiddleware;
 use App\Models\Auction;
 use App\Models\Order;
+use App\Models\Wallet;
 
 final class BuyerController
 {
@@ -22,6 +23,7 @@ final class BuyerController
             'pageTitle' => '會員中心',
             'orders' => $orderModel->forBuyer((int) Auth::user()['id']),
             'watched' => array_slice((new Auction())->featured(), 0, 3),
+            'wallet' => (new Wallet())->summary((int) Auth::user()['id']),
         ]);
     }
 
@@ -42,6 +44,7 @@ final class BuyerController
         View::render('buyer/payment', [
             'pageTitle' => '訂單付款',
             'order' => $order,
+            'wallet' => (new Wallet())->summary((int) Auth::user()['id']),
         ]);
     }
 
@@ -53,10 +56,20 @@ final class BuyerController
             redirect('buyer');
         }
         $orderId = filter_var($_POST['order_id'] ?? 0, FILTER_VALIDATE_INT) ?: 0;
-        $method = in_array($_POST['method'] ?? '', ['bank_transfer', 'virtual_credit', 'escrow'], true)
-            ? $_POST['method'] : 'escrow';
+        if (empty($_POST['confirm_payment'])) {
+            flash('error', '請先確認付款內容');
+            if ($orderId > 0) {
+                redirect('buyer-payment', ['order_id' => $orderId]);
+            }
+            redirect('buyer');
+        }
+        $method = (string) ($_POST['method'] ?? 'escrow');
+        if ($method !== 'escrow') {
+            flash('error', '目前僅支援錢包託管付款');
+            redirect('buyer');
+        }
         try {
-            (new Order())->markPaid($orderId, $method);
+            (new Order())->markPaid($orderId, (int) Auth::user()['id'], $method);
             flash('success', '付款完成，已通知賣家準備交付。');
         } catch (\Throwable $e) {
             flash('error', $e->getMessage());

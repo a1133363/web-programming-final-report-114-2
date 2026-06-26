@@ -8,6 +8,8 @@ use App\Core\Database;
 
 final class Order
 {
+    private const INITIAL_WALLET_BALANCE = 500000.0;
+
     public function find(int $id): ?array
     {
         $pdo = Database::connection();
@@ -71,24 +73,61 @@ final class Order
         return $statement->fetchAll();
     }
 
-    public function markPaid(int $orderId, string $method): void
+    public function markPaid(int $orderId, int $buyerId, string $method): void
     {
+        if ($method !== 'escrow') {
+            throw new \RuntimeException('目前僅支援錢包託管付款。');
+        }
         $pdo = Database::connection();
         if (!$pdo) {
             throw new \RuntimeException('示範模式無法付款，請先匯入資料庫。');
         }
         $pdo->beginTransaction();
         try {
+            $orderStatement = $pdo->prepare('SELECT * FROM orders WHERE id = :id FOR UPDATE');
+            $orderStatement->execute(['id' => $orderId]);
+            $order = $orderStatement->fetch();
+            if (!$order || (int) $order['buyer_id'] !== $buyerId) {
+                throw new \RuntimeException('訂單不存在或不屬於目前使用者。');
+            }
+            if ($order['status'] !== 'pending_payment') {
+                throw new \RuntimeException('此訂單無需付款或已付款。');
+            }
+
+            $wallet = $this->walletForUpdate($pdo, $buyerId);
+            $amount = (float) $order['final_price'];
+            if ((float) $wallet['balance'] < $amount) {
+                throw new \RuntimeException('錢包餘額不足，請先補足模擬餘額。');
+            }
+
             $payment = $pdo->prepare(
                 'INSERT INTO payments (order_id, transaction_ref, method, amount, status, paid_at)
-                 SELECT :order_id, :ref, :method, final_price, "paid", NOW()
-                 FROM orders WHERE id = :order_id2'
+                 VALUES (:order_id, :ref, :method, :amount, "paid", NOW())'
             );
             $payment->execute([
                 'order_id' => $orderId,
                 'ref' => 'TX-' . strtoupper(bin2hex(random_bytes(6))),
                 'method' => $method,
-                'order_id2' => $orderId,
+                'amount' => $amount,
+            ]);
+            $paymentId = (int) $pdo->lastInsertId();
+            $balanceAfter = (float) $wallet['balance'] - $amount;
+
+            $walletUpdate = $pdo->prepare('UPDATE wallets SET balance = :balance, updated_at = NOW() WHERE user_id = :user_id');
+            $walletUpdate->execute(['balance' => $balanceAfter, 'user_id' => $buyerId]);
+
+            $transaction = $pdo->prepare(
+                'INSERT INTO wallet_transactions
+                 (user_id, order_id, payment_id, type, amount, balance_after, description)
+                 VALUES (:user_id, :order_id, :payment_id, "payment", :amount, :balance_after, :description)'
+            );
+            $transaction->execute([
+                'user_id' => $buyerId,
+                'order_id' => $orderId,
+                'payment_id' => $paymentId,
+                'amount' => $amount,
+                'balance_after' => $balanceAfter,
+                'description' => '訂單 ' . $order['order_no'] . ' 模擬付款',
             ]);
 
             $update = $pdo->prepare(
@@ -136,6 +175,7 @@ final class Order
                     'UPDATE orders SET status = "completed", completed_at = NOW() WHERE id = :id'
                 );
                 $complete->execute(['id' => $orderId]);
+                $this->releaseSellerPayout($pdo, $orderId);
             }
 
             $pdo->commit();
@@ -240,6 +280,12 @@ final class Order
                 $orderStatus = $status === 'resolved_buyer' ? 'refunded' : 'completed';
                 $upd = $pdo->prepare('UPDATE orders SET status = :st WHERE id = :oid');
                 $upd->execute(['st' => $orderStatus, 'oid' => $oid]);
+
+                if ($status === 'resolved_buyer') {
+                    $this->refundBuyer($pdo, $oid);
+                } else {
+                    $this->releaseSellerPayout($pdo, $oid);
+                }
             }
 
             $pdo->commit();
@@ -247,5 +293,118 @@ final class Order
             $pdo->rollBack();
             throw $e;
         }
+    }
+
+    private function walletForUpdate(\PDO $pdo, int $userId): array
+    {
+        $create = $pdo->prepare(
+            'INSERT IGNORE INTO wallets (user_id, balance) VALUES (:user_id, :balance)'
+        );
+        $create->execute(['user_id' => $userId, 'balance' => self::INITIAL_WALLET_BALANCE]);
+
+        $wallet = $pdo->prepare('SELECT * FROM wallets WHERE user_id = :user_id FOR UPDATE');
+        $wallet->execute(['user_id' => $userId]);
+        $row = $wallet->fetch();
+        if (!$row) {
+            throw new \RuntimeException('錢包初始化失敗。');
+        }
+        return $row;
+    }
+
+    private function releaseSellerPayout(\PDO $pdo, int $orderId): void
+    {
+        $paid = $pdo->prepare('SELECT id FROM payments WHERE order_id = :order_id AND status = "paid" LIMIT 1');
+        $paid->execute(['order_id' => $orderId]);
+        $paymentId = $paid->fetchColumn();
+        if ($paymentId === false) {
+            return;
+        }
+
+        $exists = $pdo->prepare(
+            'SELECT 1 FROM wallet_transactions WHERE order_id = :order_id AND type = "payout" LIMIT 1'
+        );
+        $exists->execute(['order_id' => $orderId]);
+        if ($exists->fetchColumn()) {
+            return;
+        }
+
+        $orderStatement = $pdo->prepare('SELECT * FROM orders WHERE id = :id FOR UPDATE');
+        $orderStatement->execute(['id' => $orderId]);
+        $order = $orderStatement->fetch();
+        if (!$order) {
+            return;
+        }
+
+        $amount = max(0, (float) $order['final_price'] - (float) $order['platform_fee']);
+        if ($amount <= 0) {
+            return;
+        }
+
+        $wallet = $this->walletForUpdate($pdo, (int) $order['seller_id']);
+        $balanceAfter = (float) $wallet['balance'] + $amount;
+        $walletUpdate = $pdo->prepare('UPDATE wallets SET balance = :balance, updated_at = NOW() WHERE user_id = :user_id');
+        $walletUpdate->execute(['balance' => $balanceAfter, 'user_id' => (int) $order['seller_id']]);
+
+        $transaction = $pdo->prepare(
+            'INSERT INTO wallet_transactions
+             (user_id, order_id, payment_id, type, amount, balance_after, description)
+             VALUES (:user_id, :order_id, :payment_id, "payout", :amount, :balance_after, :description)'
+        );
+        $transaction->execute([
+            'user_id' => (int) $order['seller_id'],
+            'order_id' => $orderId,
+            'payment_id' => (int) $paymentId,
+            'amount' => $amount,
+            'balance_after' => $balanceAfter,
+            'description' => '訂單 ' . $order['order_no'] . ' 交付釋款',
+        ]);
+    }
+
+    private function refundBuyer(\PDO $pdo, int $orderId): void
+    {
+        $paid = $pdo->prepare('SELECT id FROM payments WHERE order_id = :order_id AND status = "paid" LIMIT 1');
+        $paid->execute(['order_id' => $orderId]);
+        $paymentId = $paid->fetchColumn();
+        if ($paymentId === false) {
+            return;
+        }
+
+        $exists = $pdo->prepare(
+            'SELECT 1 FROM wallet_transactions WHERE order_id = :order_id AND type = "refund" LIMIT 1'
+        );
+        $exists->execute(['order_id' => $orderId]);
+        if ($exists->fetchColumn()) {
+            return;
+        }
+
+        $orderStatement = $pdo->prepare('SELECT * FROM orders WHERE id = :id FOR UPDATE');
+        $orderStatement->execute(['id' => $orderId]);
+        $order = $orderStatement->fetch();
+        if (!$order) {
+            return;
+        }
+
+        $amount = (float) $order['final_price'];
+        $wallet = $this->walletForUpdate($pdo, (int) $order['buyer_id']);
+        $balanceAfter = (float) $wallet['balance'] + $amount;
+        $walletUpdate = $pdo->prepare('UPDATE wallets SET balance = :balance, updated_at = NOW() WHERE user_id = :user_id');
+        $walletUpdate->execute(['balance' => $balanceAfter, 'user_id' => (int) $order['buyer_id']]);
+
+        $paymentUpdate = $pdo->prepare('UPDATE payments SET status = "refunded", updated_at = NOW() WHERE id = :id');
+        $paymentUpdate->execute(['id' => (int) $paymentId]);
+
+        $transaction = $pdo->prepare(
+            'INSERT INTO wallet_transactions
+             (user_id, order_id, payment_id, type, amount, balance_after, description)
+             VALUES (:user_id, :order_id, :payment_id, "refund", :amount, :balance_after, :description)'
+        );
+        $transaction->execute([
+            'user_id' => (int) $order['buyer_id'],
+            'order_id' => $orderId,
+            'payment_id' => (int) $paymentId,
+            'amount' => $amount,
+            'balance_after' => $balanceAfter,
+            'description' => '訂單 ' . $order['order_no'] . ' 爭議退款',
+        ]);
     }
 }

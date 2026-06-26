@@ -114,7 +114,22 @@ final class SellerController
         }
         $extensions = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
         $filename = bin2hex(random_bytes(16)) . '.' . $extensions[$mime];
-        $target = $config['upload_dir'] . '/' . $filename;
+        $uploadDir = $config['upload_dir'];
+
+        if (!is_dir($uploadDir)) {
+            $oldUmask = umask(0);
+            $created = @mkdir($uploadDir, 0775, true);
+            umask($oldUmask);
+            if (!$created && !is_dir($uploadDir)) {
+                $error = error_get_last()['message'] ?? '未知錯誤';
+                throw new \RuntimeException("無法建立上傳目錄：{$uploadDir}。錯誤：{$error}");
+            }
+        }
+        if (!is_writable($uploadDir)) {
+            throw new \RuntimeException("上傳目錄無法寫入：{$uploadDir}。請確認 PHP 執行使用者對此目錄有寫入權限。");
+        }
+
+        $target = $uploadDir . '/' . $filename;
         if (!move_uploaded_file($_FILES['image']['tmp_name'], $target)) {
             throw new \RuntimeException('圖片儲存失敗。');
         }

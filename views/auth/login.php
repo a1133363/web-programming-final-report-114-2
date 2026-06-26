@@ -1,7 +1,7 @@
 <section class="auth-shell">
     <div class="auth-aside">
         <span class="section-code">ACCESS / NIGHT SESSION</span>
-        <h1>驗證你的<br>匿名席位。</h1>
+        <h1>驗證你的<br>匿名席位</h1>
         <p>登入後可參與出價、設定代理上限，並追蹤付款、交付與信用紀錄。</p>
         <div class="auth-seal" aria-hidden="true"><span>N</span><small>VERIFIED<br>SESSION</small></div>
     </div>
